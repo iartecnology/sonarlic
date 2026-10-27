@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .routes_licitaciones import router as licitaciones_router
 from .routes_ai_config import router as ai_config_router
+from .routes_perfil import router as perfil_router
 from .db import get_clickhouse
 
 app = FastAPI(
@@ -25,6 +26,7 @@ app.add_middleware(
 # Incluir Rutas
 app.include_router(licitaciones_router, prefix="/api/v1")
 app.include_router(ai_config_router, prefix="/api/v1")
+app.include_router(perfil_router, prefix="/api/v1")
 
 @app.get("/health", tags=["Health"])
 def health_check():

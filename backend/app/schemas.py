@@ -31,6 +31,8 @@ class LicitacionItem(BaseModel):
     
     # Campo inyectado en memoria tras cruce con Supabase
     is_favorite: bool = False
+    match_score: Optional[int] = None       # 0 a 100 de compatibilidad
+    match_reasons: List[str] = []           # Razones de coincidencia
 
 
 class LicitacionesResponse(BaseModel):
@@ -43,6 +45,18 @@ class LicitacionesResponse(BaseModel):
 class FavoriteToggleRequest(BaseModel):
     id_proceso: str
     favorito: bool
+
+
+class PerfilBusquedaSchema(BaseModel):
+    nombre_empresa: Optional[str] = ""
+    nit: Optional[str] = ""
+    palabras_clave: List[str] = Field(default=[], description="Palabras que buscas (ej: tecnología, papelería)")
+    palabras_excluidas: List[str] = Field(default=[], description="Palabras que deseas descartar")
+    departamentos: List[str] = Field(default=[], description="Departamentos de operación")
+    cuantia_minima: float = 0.0
+    cuantia_maxima: float = 1000000000.0
+    semaforo_maximo: str = "AMARILLO"
+    notificar_email: bool = True
 
 
 class AIConfigSchema(BaseModel):

@@ -40,6 +40,11 @@ export const LicitacionCard: React.FC<LicitacionCardProps> = ({
               {licitacion.fuente}
             </span>
             <SemaforoBadge status={licitacion.ai_semaforo} />
+            {licitacion.match_score !== undefined && licitacion.match_score !== null && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                ✨ {licitacion.match_score}% Match
+              </span>
+            )}
           </div>
 
           <button

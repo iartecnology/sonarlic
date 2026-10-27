@@ -22,6 +22,8 @@ export interface Licitacion {
   ai_sectores?: string[];
   ai_matching_tags?: string[];
   is_favorite: boolean;
+  match_score?: number;
+  match_reasons?: string[];
 }
 
 export interface LicitacionesResponse {
@@ -29,4 +31,16 @@ export interface LicitacionesResponse {
   page: number;
   limit: number;
   items: Licitacion[];
+}
+
+export interface PerfilBusqueda {
+  nombre_empresa?: string;
+  nit?: string;
+  palabras_clave: string[];
+  palabras_excluidas: string[];
+  departamentos: string[];
+  cuantia_minima: number;
+  cuantia_maxima: number;
+  semaforo_maximo: string;
+  notificar_email: boolean;
 }

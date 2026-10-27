@@ -5,11 +5,13 @@ import { Licitacion, LicitacionesResponse } from '@/lib/types';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
 import { AIConfigModal } from '@/components/AIConfigModal';
-import { Search, Filter, Radar, Sparkles, Building2, Calendar, DollarSign, X, Bot, Settings } from 'lucide-react';
+import { PerfilModal } from '@/components/PerfilModal';
+import { Search, Filter, Radar, Sparkles, Building2, Calendar, DollarSign, X, Bot, Target, Star, Layers } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function DashboardPage() {
+  const [activeTab, setActiveTab] = useState<'explorador' | 'oportunidades'>('explorador');
   const [licitaciones, setLicitaciones] = useState<Licitacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -22,21 +24,31 @@ export default function DashboardPage() {
   // Modales
   const [selectedLicitacion, setSelectedLicitacion] = useState<Licitacion | null>(null);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [isPerfilModalOpen, setIsPerfilModalOpen] = useState(false);
 
   const fetchLicitaciones = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (query) params.append('q', query);
-      if (departamento) params.append('departamento', departamento);
-      if (semaforo) params.append('semaforo', semaforo);
-      params.append('limit', '24');
+      if (activeTab === 'oportunidades') {
+        const res = await fetch(`${API_BASE}/api/v1/perfil/mis-oportunidades?limit=24`);
+        if (res.ok) {
+          const data: LicitacionesResponse = await res.json();
+          setLicitaciones(data.items);
+          setTotal(data.total);
+        }
+      } else {
+        const params = new URLSearchParams();
+        if (query) params.append('q', query);
+        if (departamento) params.append('departamento', departamento);
+        if (semaforo) params.append('semaforo', semaforo);
+        params.append('limit', '24');
 
-      const res = await fetch(`${API_BASE}/api/v1/licitaciones?${params.toString()}`);
-      if (res.ok) {
-        const data: LicitacionesResponse = await res.json();
-        setLicitaciones(data.items);
-        setTotal(data.total);
+        const res = await fetch(`${API_BASE}/api/v1/licitaciones?${params.toString()}`);
+        if (res.ok) {
+          const data: LicitacionesResponse = await res.json();
+          setLicitaciones(data.items);
+          setTotal(data.total);
+        }
       }
     } catch (err) {
       console.error('Error cargando licitaciones:', err);
@@ -47,7 +59,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchLicitaciones();
-  }, [departamento, semaforo]);
+  }, [activeTab, departamento, semaforo]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +105,16 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsPerfilModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-indigo-200 bg-indigo-50/60 text-xs font-semibold text-indigo-700 hover:bg-indigo-100 transition-colors shadow-sm"
+              title="Configurar Criterios y Palabras Clave de tu Empresa"
+            >
+              <Target className="w-4 h-4 text-indigo-600" />
+              <span>Mi Perfil PYME</span>
+            </button>
+
             <button
               onClick={() => setIsAIModalOpen(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
@@ -102,12 +123,38 @@ export default function DashboardPage() {
               <Bot className="w-4 h-4 text-emerald-600" />
               <span>Configurar IA</span>
             </button>
-            <span className="hidden md:inline-block text-xs text-slate-400 font-medium">
-              SECOP I & II
-            </span>
           </div>
         </div>
       </header>
+
+      {/* Selector de Pestañas: Mis Oportunidades vs Explorador General */}
+      <div className="bg-slate-800 border-b border-slate-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-3">
+          <button
+            onClick={() => setActiveTab('explorador')}
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-all ${
+              activeTab === 'explorador'
+                ? 'border-emerald-500 text-white'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            Explorador General SECOP
+          </button>
+
+          <button
+            onClick={() => setActiveTab('oportunidades')}
+            className={`py-3 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-all ${
+              activeTab === 'oportunidades'
+                ? 'border-indigo-500 text-white bg-indigo-950/40 rounded-t-lg'
+                : 'border-transparent text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-indigo-400" />
+            Mis Oportunidades (Radar PYME)
+          </button>
+        </div>
+      </div>
 
       {/* Hero y Filtros */}
       <section className="bg-slate-900 text-white py-12 px-4 sm:px-6 lg:px-8">
@@ -310,6 +357,17 @@ export default function DashboardPage() {
         isOpen={isAIModalOpen}
         onClose={() => setIsAIModalOpen(false)}
         apiBase={API_BASE}
+      />
+
+      {/* Modal de Perfil de Contratación PYME */}
+      <PerfilModal
+        isOpen={isPerfilModalOpen}
+        onClose={() => setIsPerfilModalOpen(false)}
+        apiBase={API_BASE}
+        onProfileSaved={() => {
+          setActiveTab('oportunidades');
+          fetchLicitaciones();
+        }}
       />
     </div>
   );
