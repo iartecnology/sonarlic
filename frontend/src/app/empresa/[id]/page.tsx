@@ -438,7 +438,7 @@ export default function EmpresaDashboardPage() {
                   <LicitacionCard
                     key={lic.id_proceso}
                     licitacion={lic}
-                    onOpenModal={(item) => setSelectedLicitacion(item)}
+                    onSelect={(item) => setSelectedLicitacion(item)}
                     onToggleFavorite={() => {}}
                   />
                 ))}
