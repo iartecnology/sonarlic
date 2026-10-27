@@ -21,7 +21,6 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
-  // Cargar configuración actual
   useEffect(() => {
     if (isOpen) {
       fetch(`${apiBase}/api/v1/config/ai`)
@@ -85,7 +84,7 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
         setMaskedKey(data.api_key_masked);
         setApiKey('');
         setIsConfigured(true);
-        setFeedback({ type: 'success', message: 'Proveedor de IA configurado y activo con éxito.' });
+        setFeedback({ type: 'success', message: 'Motor de IA de SonarLIC actualizado con éxito.' });
         setTimeout(() => onClose(), 1500);
       } else {
         const err = await res.json();
@@ -101,21 +100,26 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 p-6 flex flex-col justify-between animate-in fade-in zoom-in-95">
+    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200/80 p-6 sm:p-7 flex flex-col justify-between animate-in fade-in zoom-in-95 overflow-hidden relative">
+        {/* Barra superior con gradiente IAR */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5]" />
+
         <div>
           {/* Header */}
-          <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <Bot className="w-5 h-5" />
+          <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#6C5B8B]/10 to-[#3B6DB5]/20 text-[#6C5B8B] flex items-center justify-center border border-[#6C5B8B]/20">
+                <Bot className="w-5 h-5 text-[#6C5B8B]" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-slate-900">Configuración del Proveedor de IA</h3>
-                <p className="text-xs text-slate-500">Ajusta el LLM que analizará los pliegos y semáforos en tiempo real</p>
+                <h3 className="text-base font-bold text-slate-900">Motor de Inteligencia Artificial</h3>
+                <p className="text-xs text-slate-500">Configura el LLM cognitivo para el análisis de pliegos y semáforos</p>
               </div>
             </div>
-            <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-sm font-semibold">✕</button>
+            <button onClick={onClose} className="p-1 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
+              ✕
+            </button>
           </div>
 
           {/* Feedback */}
@@ -131,8 +135,8 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Selector de Proveedor */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-slate-500" /> Proveedor de Inteligencia Artificial
+              <label className="block text-xs font-bold text-slate-700 mb-2 flex items-center gap-1.5">
+                <Cpu className="w-3.5 h-3.5 text-[#3B6DB5]" /> Proveedor de LLM
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
@@ -145,9 +149,9 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
                     key={item.id}
                     type="button"
                     onClick={() => handleProviderChange(item.id)}
-                    className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all text-center ${
+                    className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all text-center ${
                       provider === item.id
-                        ? 'border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm'
+                        ? 'border-[#9B4B75] bg-gradient-to-br from-[#9B4B75]/10 to-[#3B6DB5]/10 text-slate-900 shadow-xs'
                         : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                     }`}
                   >
@@ -159,13 +163,13 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
 
             {/* API Key */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
-                  <Key className="w-3.5 h-3.5 text-slate-500" /> API Key / Token
+                  <Key className="w-3.5 h-3.5 text-[#D9465A]" /> API Key / Token Secreto
                 </span>
                 {isConfigured && (
-                  <span className="text-[11px] text-emerald-600 font-medium">
-                    Clave guardada: {maskedKey}
+                  <span className="text-[11px] text-emerald-600 font-semibold">
+                    Activa: {maskedKey}
                   </span>
                 )}
               </label>
@@ -173,15 +177,15 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder={isConfigured ? 'Escribe para cambiar la clave actual...' : 'sk-proj-... / sk-...'}
-                className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                placeholder={isConfigured ? 'Escribe aquí para reemplazar la clave...' : 'sk-proj-... / sk-...'}
+                className="w-full px-3.5 py-2.5 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#3B6DB5] focus:outline-none bg-slate-50/50"
               />
             </div>
 
             {/* Modelo y Base URL */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
                   <Cpu className="w-3.5 h-3.5 text-slate-500" /> Modelo
                 </label>
                 <input
@@ -189,13 +193,13 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
                   value={model}
                   onChange={(e) => setModel(e.target.value)}
                   placeholder="ej: gpt-4o-mini o deepseek-chat"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#3B6DB5] focus:outline-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 text-slate-500" /> Base URL (OpenAI Spec)
                 </label>
                 <input
@@ -203,7 +207,7 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
                   placeholder="https://api.openai.com/v1"
-                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#3B6DB5] focus:outline-none"
                   required
                 />
               </div>
@@ -211,11 +215,11 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
 
             {/* Temperatura */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
+              <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-slate-500" /> Temperatura: {temperature}
+                  <Sliders className="w-3.5 h-3.5 text-slate-500" /> Temperatura Cognitiva: {temperature}
                 </span>
-                <span className="text-[11px] text-slate-400">0.0 (determinista) a 1.0 (creativo)</span>
+                <span className="text-[11px] text-slate-400">0.0 (preciso) a 1.0 (creativo)</span>
               </label>
               <input
                 type="range"
@@ -224,7 +228,7 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
                 step="0.05"
                 value={temperature}
                 onChange={(e) => setTemperature(parseFloat(e.target.value))}
-                className="w-full accent-emerald-600 cursor-pointer"
+                className="w-full accent-[#3B6DB5] cursor-pointer"
               />
             </div>
 
@@ -233,14 +237,14 @@ export const AIConfigModal: React.FC<AIConfigModalProps> = ({ isOpen, onClose, a
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50"
+                className="px-4 py-2.5 text-xs font-bold rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
                 disabled={saving}
-                className="px-5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                className="px-5 py-2.5 text-xs font-bold rounded-xl bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 text-white flex items-center gap-1.5 shadow-md shadow-[#9B4B75]/20 transition-all disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 {saving ? 'Guardando...' : 'Guardar y Activar'}
