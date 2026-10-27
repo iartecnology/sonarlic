@@ -127,30 +127,9 @@ export default function DashboardPage() {
 
           {/* Acciones de la barra */}
           <div className="flex items-center gap-2.5">
-            <Link
-              href="/empresa/emp_tecnologia"
-              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
-              title="Panel Multi-Búsqueda de Empresa"
-            >
-              <Building2 className="w-4 h-4 text-[#3B6DB5]" />
-              <span>Portal Empresas</span>
-            </Link>
-
-            <Link
-              href="/superadmin"
-              className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
-              title="Panel de Control SuperAdmin SaaS"
-            >
-              <ShieldCheck className="w-4 h-4 text-[#D9465A]" />
-              <span>SuperAdmin</span>
-            </Link>
-
-            {/* Botones de Autenticación & Acceso Rápido */}
-            <div className="h-5 w-px bg-slate-200 hidden sm:block mx-0.5" />
-
             <button
               onClick={openLogin}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition shadow-2xs"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition shadow-2xs"
               title="Iniciar Sesión / Acceso Rápido Demo"
             >
               <LogIn className="w-3.5 h-3.5 text-[#3B6DB5]" />
@@ -159,7 +138,7 @@ export default function DashboardPage() {
 
             <button
               onClick={openRegister}
-              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition hover:scale-[1.02] active:scale-[0.98]"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition hover:scale-[1.02] active:scale-[0.98]"
               title="Registrar Nueva Empresa"
             >
               <UserPlus className="w-3.5 h-3.5" />
