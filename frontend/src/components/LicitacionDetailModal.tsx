@@ -46,12 +46,14 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
     try {
       const d = new Date(dateStr);
       return d.toLocaleDateString('es-CO', { 
+        timeZone: 'America/Bogota',
         year: 'numeric', 
         month: 'short', 
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
-      });
+        minute: '2-digit',
+        hour12: true
+      }) + ' (COT / Hora Bogotá)';
     } catch {
       return dateStr;
     }
@@ -87,13 +89,13 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
 
   return (
     <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in">
-      <div className="bg-white rounded-3xl max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden relative">
+      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden relative">
         {/* Barra superior con gradiente de marca IAR */}
         <div className="h-1.5 w-full bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5]" />
 
         {/* Header Modal */}
         <div className="p-5 sm:p-6 pb-4 border-b border-slate-100 flex items-start justify-between gap-4">
-          <div className="space-y-1.5">
+          <div className="space-y-2 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <SemaforoBadge status={licitacion.ai_semaforo} />
               {licitacion.match_score !== undefined && (
@@ -102,20 +104,32 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
                   {licitacion.match_score}% Compatibilidad
                 </span>
               )}
-              <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+              <span className="text-[11px] font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
                 {licitacion.numero_proceso || licitacion.id_proceso}
               </span>
-            </div>
-            
-            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
-              <Building2 className="w-4 h-4 text-[#3B6DB5]" />
-              <span>{licitacion.entidad}</span>
-              {licitacion.orden_entidad && (
-                <span className="text-[10px] text-slate-400 font-normal">({licitacion.orden_entidad})</span>
+              {licitacion.estado && (
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-[#3B6DB5] border border-blue-100">
+                  {licitacion.estado}
+                </span>
               )}
             </div>
+            
+            {/* Nombre Completo de la Entidad */}
+            <div className="flex items-start gap-2 text-xs font-black text-slate-800">
+              <Building2 className="w-4 h-4 text-[#3B6DB5] shrink-0 mt-0.5" />
+              <div className="leading-snug">
+                <span className="text-slate-900 font-extrabold text-sm">{licitacion.entidad}</span>
+                {licitacion.nit_entidad && (
+                  <span className="text-[11px] text-slate-500 font-normal ml-2 font-mono">NIT: {licitacion.nit_entidad}</span>
+                )}
+                {licitacion.orden_entidad && (
+                  <span className="text-[10px] text-slate-400 font-medium ml-2">({licitacion.orden_entidad})</span>
+                )}
+              </div>
+            </div>
 
-            <h2 className="text-base sm:text-lg font-black text-slate-900 leading-snug line-clamp-2">
+            {/* Objeto Completo de la Licitación */}
+            <h2 className="text-base sm:text-lg font-black text-slate-900 leading-relaxed pt-1">
               {licitacion.objeto}
             </h2>
           </div>
@@ -221,6 +235,15 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
 
               {/* Justificación y Clasificación */}
               <div className="space-y-2 text-xs">
+                {licitacion.justificacion_modalidad && (
+                  <div className="flex items-start gap-2 p-2.5 bg-slate-100/80 rounded-xl border border-slate-200 text-slate-700">
+                    <Briefcase className="w-4 h-4 text-[#9B4B75] shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-slate-900">Justificación Modalidad: </span>
+                      <span>{licitacion.justificacion_modalidad}</span>
+                    </div>
+                  </div>
+                )}
                 {licitacion.codigo_unspsc && (
                   <div className="flex items-start gap-2 p-2.5 bg-blue-50/60 rounded-xl border border-blue-100 text-slate-700">
                     <Tag className="w-4 h-4 text-[#3B6DB5] shrink-0 mt-0.5" />

@@ -80,9 +80,9 @@ export const LicitacionCard: React.FC<LicitacionCardProps> = ({
         </div>
 
         {/* Entidad Contratante */}
-        <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 mb-1.5">
-          <Building2 className="w-3.5 h-3.5 text-[#3B6DB5] shrink-0" />
-          <span className="truncate">{licitacion.entidad}</span>
+        <div className="flex items-start gap-1.5 text-[11px] font-semibold text-slate-700 mb-1.5 leading-snug">
+          <Building2 className="w-3.5 h-3.5 text-[#3B6DB5] shrink-0 mt-0.5" />
+          <span className="break-words font-bold">{licitacion.entidad}</span>
         </div>
 
         {/* Objeto de la Licitación */}
