@@ -216,9 +216,9 @@ export default function EmpresaDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      {/* Barra de Navegación del Panel de Empresa */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* Barra de Navegación con Vidrio Esmerilado Oficial iAR Tecnology */}
+      <header className="sticky top-0 z-40 px-3 sm:px-6 pt-0 transition-all duration-300">
+        <div className="max-w-7xl mx-auto bg-white/80 backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border-b border-x border-white/60 rounded-b-[25px] shadow-[0px_5px_23px_4px_rgba(0,0,0,0.08)] px-4 sm:px-8 h-18 flex items-center justify-between transition-all">
           <div className="flex items-center gap-4">
             <SonarLogo size="md" />
             <div className="h-6 w-px bg-slate-200 hidden sm:block" />
@@ -234,19 +234,19 @@ export default function EmpresaDashboardPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/superadmin"
-              className="text-xs font-bold text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition"
+              className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200/80 bg-white/60 hover:bg-white transition"
             >
               Control SaaS (SuperAdmin)
             </Link>
             <Link
               href="/"
-              className="text-xs font-bold text-slate-500 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition"
+              className="text-xs font-bold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200/80 bg-white/60 hover:bg-white transition"
             >
               Radar Público
             </Link>
             <button
               onClick={() => setIsPerfilModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200/80 bg-white/60 hover:bg-white transition"
               title="Configurar Perfil de Contratación PYME"
             >
               <Target className="w-4 h-4 text-[#9B4B75]" />

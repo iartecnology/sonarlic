@@ -119,9 +119,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
-      {/* 1. Barra de Navegación con Identidad Corporativa iAR */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* 1. Barra de Navegación con Efecto Vidrio Esmerilado Oficial iAR Tecnology */}
+      <header className="sticky top-0 z-40 px-3 sm:px-6 pt-0 transition-all duration-300">
+        <div className="max-w-7xl mx-auto bg-white/75 backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border-b border-x border-white/60 rounded-b-[25px] shadow-[0px_5px_23px_4px_rgba(0,0,0,0.08)] px-4 sm:px-8 h-18 flex items-center justify-between transition-all">
           {/* Logo Oficial SonarLIC iAR tecnology */}
           <SonarLogo size="md" />
 
@@ -129,7 +129,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2.5">
             <button
               onClick={openLogin}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition shadow-2xs"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200/80 bg-white/60 hover:bg-white transition shadow-2xs backdrop-blur-xs"
               title="Iniciar Sesión / Acceso Rápido Demo"
             >
               <LogIn className="w-3.5 h-3.5 text-[#3B6DB5]" />

@@ -112,9 +112,9 @@ export default function SuperAdminPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      {/* Header Corporativo SuperAdmin */}
-      <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-30 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      {/* Header Corporativo SuperAdmin con Vidrio Esmerilado Oficial iAR Tecnology */}
+      <header className="sticky top-0 z-40 px-3 sm:px-6 pt-0 transition-all duration-300">
+        <div className="max-w-7xl mx-auto bg-slate-900/80 backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border-b border-x border-slate-700/60 rounded-b-[25px] shadow-[0px_5px_23px_4px_rgba(0,0,0,0.3)] text-white px-4 sm:px-8 h-18 flex items-center justify-between transition-all">
           <div className="flex items-center gap-4">
             <SonarLogo size="md" />
             <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-gradient-to-r from-[#D9465A] to-[#9B4B75] text-white uppercase tracking-wider">
@@ -134,14 +134,14 @@ export default function SuperAdminPage() {
 
             <Link
               href="/"
-              className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition"
+              className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition"
             >
               ← Ir al Radar Público
             </Link>
 
             <button
               onClick={() => setIsAIModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition"
               title="Configurar Proveedor de Inteligencia Artificial (OpenAI, DeepSeek, Groq, Ollama)"
             >
               <Bot className="w-4 h-4 text-[#9B4B75]" />
