@@ -160,3 +160,18 @@ def toggle_favorite(payload: FavoriteToggleRequest, user: dict = Depends(require
         return {"status": "ok", "id_proceso": payload.id_proceso, "is_favorite": payload.favorito}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error actualizando favoritos: {str(e)}")
+
+@router.post("/sync")
+def sync_licitaciones_soda(limit: int = 50):
+    """
+    Sincroniza directamente lotes de licitaciones de SECOP II desde Datos Abiertos Colombia
+    usando las credenciales de la API SODA configuradas.
+    """
+    try:
+        import sys
+        sys.path.append("/app")
+        from worker.tasks.celery_app import ingest_secop_ii_incremental
+        result = ingest_secop_ii_incremental(limit=limit)
+        return {"status": "success", "result": result}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

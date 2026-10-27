@@ -35,11 +35,13 @@ def ingest_secop_ii_incremental(limit: int = 100):
     Inserta por lotes en ClickHouse y dispara enriquecimiento IA en cola.
     """
     logger.info(f"Iniciando sincronización incremental de SECOP II (Límite: {limit})...")
-    
     try:
+        token = settings.SODA_APP_TOKEN or settings.SODA_API_KEY
         client = Socrata(
             settings.SODA_DOMAIN,
-            settings.SODA_APP_TOKEN,
+            app_token=token,
+            username=settings.SODA_API_KEY,
+            password=settings.SODA_API_SECRET,
             timeout=30
         )
         

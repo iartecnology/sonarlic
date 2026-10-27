@@ -14,6 +14,8 @@ class WorkerSettings(BaseSettings):
     # Datos Abiertos Colombia SODA API
     SODA_DOMAIN: str = "www.datos.gov.co"
     SODA_APP_TOKEN: Optional[str] = None
+    SODA_API_KEY: Optional[str] = "5548b0pbh9t3vqyjg4o157gwx"
+    SODA_API_SECRET: Optional[str] = "20o4789z34rzf6q26x89233h60nqmo7brb715x51o5lbxe0g1k"
     
     # IDs de datasets oficiales de Colombia Compra Eficiente
     DATASET_SECOP_II: str = "jbjy-vk9h"  # Procesos de Contratación SECOP II
