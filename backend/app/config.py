@@ -6,7 +6,7 @@ class BackendSettings(BaseSettings):
     ENVIRONMENT: str = "development"
     
     # ClickHouse
-    CLICKHOUSE_HOST: str = "clickhouse"
+    CLICKHOUSE_HOST: str = "sonar_clickhouse"
     CLICKHOUSE_PORT: int = 8123
     CLICKHOUSE_USER: str = "default"
     CLICKHOUSE_PASSWORD: str = "clickhouse_secure_pass_change_me"
