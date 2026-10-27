@@ -78,7 +78,8 @@ def list_licitaciones(
             departamento, municipio, estado, modalidad, tipo_contrato,
             objeto, cuantia, moneda, fecha_publicacion, fecha_cierre,
             fecha_adjudicacion, url_proceso, ai_resumen, ai_semaforo,
-            ai_pliegos_requisitos, ai_sectores, ai_matching_tags
+            ai_pliegos_requisitos, ai_sectores, ai_matching_tags,
+            codigo_unspsc, duracion, justificacion_modalidad, documentos_tipo, orden_entidad, requisitos_habilitantes
         FROM radar_db.licitaciones FINAL
         WHERE {where_sql}
         ORDER BY fecha_publicacion DESC
@@ -91,7 +92,8 @@ def list_licitaciones(
         "departamento", "municipio", "estado", "modalidad", "tipo_contrato",
         "objeto", "cuantia", "moneda", "fecha_publicacion", "fecha_cierre",
         "fecha_adjudicacion", "url_proceso", "ai_resumen", "ai_semaforo",
-        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags"
+        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags",
+        "codigo_unspsc", "duracion", "justificacion_modalidad", "documentos_tipo", "orden_entidad", "requisitos_habilitantes"
     ]
     
     # 3. TRUCO DE INYECCIÓN EN MEMORIA DE FAVORITOS
@@ -121,7 +123,8 @@ def get_licitacion_detail(id_proceso: str, user: Optional[dict] = Depends(get_cu
             departamento, municipio, estado, modalidad, tipo_contrato,
             objeto, cuantia, moneda, fecha_publicacion, fecha_cierre,
             fecha_adjudicacion, url_proceso, ai_resumen, ai_semaforo,
-            ai_pliegos_requisitos, ai_sectores, ai_matching_tags
+            ai_pliegos_requisitos, ai_sectores, ai_matching_tags,
+            codigo_unspsc, duracion, justificacion_modalidad, documentos_tipo, orden_entidad, requisitos_habilitantes
         FROM radar_db.licitaciones FINAL
         WHERE id_proceso = %(id)s
         LIMIT 1
@@ -135,7 +138,8 @@ def get_licitacion_detail(id_proceso: str, user: Optional[dict] = Depends(get_cu
         "departamento", "municipio", "estado", "modalidad", "tipo_contrato",
         "objeto", "cuantia", "moneda", "fecha_publicacion", "fecha_cierre",
         "fecha_adjudicacion", "url_proceso", "ai_resumen", "ai_semaforo",
-        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags"
+        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags",
+        "codigo_unspsc", "duracion", "justificacion_modalidad", "documentos_tipo", "orden_entidad", "requisitos_habilitantes"
     ]
     row_dict = dict(zip(col_names, res[0]))
     

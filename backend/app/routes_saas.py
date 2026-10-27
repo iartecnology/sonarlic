@@ -278,7 +278,8 @@ def get_cruces_empresa(
         "departamento", "municipio", "estado", "modalidad", "tipo_contrato",
         "objeto", "cuantia", "moneda", "fecha_publicacion", "fecha_cierre",
         "fecha_adjudicacion", "url_proceso", "ai_resumen", "ai_semaforo",
-        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags"
+        "ai_pliegos_requisitos", "ai_sectores", "ai_matching_tags",
+        "codigo_unspsc", "duracion", "justificacion_modalidad", "documentos_tipo", "orden_entidad", "requisitos_habilitantes"
     ]
     
     rows = ch.query(f"""

@@ -7,6 +7,7 @@ import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
 import { PerfilModal } from '@/components/PerfilModal';
 import { NotificacionesBell } from '@/components/NotificacionesBell';
+import LicitacionDetailModal from '@/components/LicitacionDetailModal';
 import { ReglaBusqueda, EmpresaSaas, Licitacion, LicitacionesResponse } from '@/lib/types';
 import {
   Building2,
@@ -698,78 +699,11 @@ export default function EmpresaDashboardPage() {
         </div>
       )}
 
-      {/* Modal Detalle Licitación */}
-      {selectedLicitacion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200">
-            <div className="flex items-start justify-between pb-4 border-b border-slate-100">
-              <div>
-                <span className="text-[10px] font-mono font-bold text-slate-400">
-                  {selectedLicitacion.numero_proceso}
-                </span>
-                <h3 className="text-base font-black text-slate-900 mt-1">
-                  {selectedLicitacion.entidad}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedLicitacion(null)}
-                className="text-slate-400 hover:text-slate-600 p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="py-4 space-y-3">
-              <div>
-                <span className="text-xs font-bold text-slate-700">Objeto del Contrato:</span>
-                <p className="text-xs text-slate-600 mt-1">{selectedLicitacion.objeto}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 p-3 rounded-xl">
-                <div>
-                  <span className="text-slate-400">Cuantía:</span>
-                  <div className="font-bold text-slate-900">
-                    ${selectedLicitacion.cuantia.toLocaleString('es-CO')} COP
-                  </div>
-                </div>
-                <div>
-                  <span className="text-slate-400">Ubicación:</span>
-                  <div className="font-bold text-slate-900">
-                    {selectedLicitacion.departamento} ({selectedLicitacion.municipio || 'Principal'})
-                  </div>
-                </div>
-              </div>
-
-              {selectedLicitacion.ai_resumen && (
-                <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100">
-                  <span className="text-xs font-bold text-[#3B6DB5]">Diagnóstico Cognitivo IA:</span>
-                  <p className="text-xs text-slate-700 mt-1">{selectedLicitacion.ai_resumen}</p>
-                </div>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
-              <button
-                onClick={() => setSelectedLicitacion(null)}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900"
-              >
-                Cerrar
-              </button>
-              {selectedLicitacion.url_proceso && (
-                <a
-                  href={selectedLicitacion.url_proceso}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#3B6DB5] rounded-xl hover:bg-blue-700 transition"
-                >
-                  Ver en SECOP II
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal Detalle Licitación 360° con Expediente Completo */}
+      <LicitacionDetailModal
+        licitacion={selectedLicitacion}
+        onClose={() => setSelectedLicitacion(null)}
+      />
 
       {/* Modal Perfil de Contratación PYME de la Empresa */}
       <PerfilModal

@@ -22,6 +22,14 @@ class LicitacionItem(BaseModel):
     fecha_adjudicacion: Optional[datetime] = None
     url_proceso: Optional[str] = None
     
+    # Campos enriquecidos de pliegos y condiciones SECOP
+    codigo_unspsc: Optional[str] = ""
+    duracion: Optional[str] = ""
+    justificacion_modalidad: Optional[str] = ""
+    documentos_tipo: Optional[str] = ""
+    orden_entidad: Optional[str] = ""
+    requisitos_habilitantes: Optional[str] = ""
+    
     # Campos cognitivos de IA
     ai_resumen: Optional[str] = ""
     ai_semaforo: Optional[str] = "PENDIENTE"

@@ -16,6 +16,12 @@ export interface Licitacion {
   fecha_cierre?: string;
   fecha_adjudicacion?: string;
   url_proceso?: string;
+  codigo_unspsc?: string;
+  duracion?: string;
+  justificacion_modalidad?: string;
+  documentos_tipo?: string;
+  orden_entidad?: string;
+  requisitos_habilitantes?: string;
   ai_resumen?: string;
   ai_semaforo?: 'VERDE' | 'AMARILLO' | 'ROJO' | 'PENDIENTE';
   ai_pliegos_requisitos?: string;
