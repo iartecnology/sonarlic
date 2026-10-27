@@ -165,8 +165,6 @@ def toggle_favorite(payload: FavoriteToggleRequest, user: dict = Depends(require
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error actualizando favoritos: {str(e)}")
 
-@router.post("/sync")
-def sync_licitaciones_soda(limit: int = 50):
 @router.get("/{id_proceso}/documentos")
 def get_licitacion_documentos(id_proceso: str):
     """
