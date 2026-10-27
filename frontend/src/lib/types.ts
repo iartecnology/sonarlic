@@ -81,3 +81,25 @@ export interface SuperAdminStats {
   distribucion_planes: Record<string, number>;
   ultimas_empresas: EmpresaSaas[];
 }
+
+export interface Notificacion {
+  id: string;
+  empresa_id: string;
+  regla_id?: string;
+  id_proceso: string;
+  titulo: string;
+  entidad: string;
+  departamento: string;
+  cuantia: number;
+  ai_semaforo: string;
+  match_score: number;
+  match_reasons: string[];
+  leida: boolean;
+  created_at?: string;
+}
+
+export interface NotificacionesResponse {
+  total: number;
+  no_leidas: number;
+  items: Notificacion[];
+}

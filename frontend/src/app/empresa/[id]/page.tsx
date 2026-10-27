@@ -6,6 +6,7 @@ import { SonarLogo } from '@/components/SonarLogo';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
 import { PerfilModal } from '@/components/PerfilModal';
+import { NotificacionesBell } from '@/components/NotificacionesBell';
 import { ReglaBusqueda, EmpresaSaas, Licitacion, LicitacionesResponse } from '@/lib/types';
 import {
   Building2,
@@ -252,6 +253,18 @@ export default function EmpresaDashboardPage() {
               <Target className="w-4 h-4 text-[#9B4B75]" />
               <span>Perfil Contratación PYME</span>
             </button>
+            <NotificacionesBell
+              empresaId={empresaId}
+              apiBase={API_BASE}
+              onSelectLicitacion={(id) => {
+                const el = document.getElementById(`licitacion-${id}`);
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                  el.classList.add('ring-2', 'ring-[#D9465A]');
+                  setTimeout(() => el.classList.remove('ring-2', 'ring-[#D9465A]'), 3000);
+                }
+              }}
+            />
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-sm transition"

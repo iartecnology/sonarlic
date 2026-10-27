@@ -113,3 +113,26 @@ class SuperAdminStatsResponse(BaseModel):
     total_cruces_generados: int
     distribucion_planes: dict
     ultimas_empresas: List[EmpresaSaasSchema]
+
+
+class NotificacionSchema(BaseModel):
+    id: str
+    empresa_id: str
+    regla_id: Optional[str] = ""
+    id_proceso: str
+    titulo: str
+    entidad: str
+    departamento: str
+    cuantia: float
+    ai_semaforo: str
+    match_score: int
+    match_reasons: List[str] = []
+    leida: bool = False
+    created_at: Optional[datetime] = None
+
+
+class NotificacionesResponse(BaseModel):
+    total: int
+    no_leidas: int
+    items: List[NotificacionSchema]
+

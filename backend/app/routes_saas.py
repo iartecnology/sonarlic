@@ -7,7 +7,9 @@ from .schemas import (
     EmpresaSaasSchema,
     SuperAdminStatsResponse,
     LicitacionesResponse,
-    LicitacionItem
+    LicitacionItem,
+    NotificacionSchema,
+    NotificacionesResponse
 )
 from .db import get_clickhouse
 
@@ -362,3 +364,82 @@ def get_cruces_empresa(
         limit=limit,
         items=paginated
     )
+
+
+# =========================================================================
+# RUTAS DE NOTIFICACIONES EN TIEMPO REAL PARA EMPRESAS
+# =========================================================================
+
+@router.get("/empresas/{empresa_id}/notificaciones", response_model=NotificacionesResponse)
+def get_empresa_notificaciones(empresa_id: str, limit: int = Query(30, ge=1, le=100)):
+    """Obtiene el historial de notificaciones y alertas de matches para la empresa."""
+    ch = get_clickhouse()
+    
+    rows = ch.query("""
+        SELECT id, empresa_id, regla_id, id_proceso, titulo, entidad, departamento, 
+               cuantia, ai_semaforo, match_score, match_reasons, leida, created_at
+        FROM radar_db.notificaciones_empresa FINAL
+        WHERE empresa_id = %(emp)s
+        ORDER BY created_at DESC
+        LIMIT %(lim)s
+    """, parameters={"emp": empresa_id, "lim": limit}).result_rows
+    
+    notifs = []
+    no_leidas = 0
+    for r in rows:
+        is_leida = bool(r[11])
+        if not is_leida:
+            no_leidas += 1
+        notifs.append(NotificacionSchema(
+            id=r[0],
+            empresa_id=r[1],
+            regla_id=r[2],
+            id_proceso=r[3],
+            titulo=r[4],
+            entidad=r[5],
+            departamento=r[6],
+            cuantia=float(r[7]),
+            ai_semaforo=r[8],
+            match_score=int(r[9]),
+            match_reasons=r[10],
+            leida=is_leida,
+            created_at=r[12]
+        ))
+        
+    return NotificacionesResponse(
+        total=len(notifs),
+        no_leidas=no_leidas,
+        items=notifs
+    )
+
+
+@router.post("/empresas/{empresa_id}/notificaciones/{notif_id}/leer")
+def mark_notificacion_leida(empresa_id: str, notif_id: str):
+    """Marca una notificación como leída."""
+    ch = get_clickhouse()
+    try:
+        ch.query("""
+            INSERT INTO radar_db.notificaciones_empresa (id, empresa_id, leida, created_at)
+            VALUES (%(id)s, %(emp)s, 1, now())
+        """, parameters={"id": notif_id, "emp": empresa_id})
+    except Exception as e:
+        pass
+    return {"status": "ok", "message": "Notificación marcada como leída"}
+
+
+@router.post("/empresas/{empresa_id}/notificaciones/leer-todas")
+def mark_all_notificaciones_leidas(empresa_id: str):
+    """Marca todas las notificaciones de la empresa como leídas."""
+    ch = get_clickhouse()
+    try:
+        # Consulta las no leídas e inserta con leida=1
+        rows = ch.query("SELECT id FROM radar_db.notificaciones_empresa FINAL WHERE empresa_id = %(emp)s AND leida = 0", parameters={"emp": empresa_id}).result_rows
+        for r in rows:
+            ch.query("""
+                INSERT INTO radar_db.notificaciones_empresa (id, empresa_id, leida, created_at)
+                VALUES (%(id)s, %(emp)s, 1, now())
+            """, parameters={"id": r[0], "emp": empresa_id})
+    except Exception:
+        pass
+    return {"status": "ok", "message": "Todas las notificaciones fueron marcadas como leídas"}
+
