@@ -1,29 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Optional, List, Dict, Any
 from .schemas import PerfilBusquedaSchema, LicitacionesResponse, LicitacionItem
-from .auth import require_current_user, supabase
+from .auth import get_current_user, require_current_user, supabase
 from .db import get_clickhouse
 
 router = APIRouter(prefix="/perfil", tags=["Perfil de Contratación & Radar"])
 
 @router.get("", response_model=PerfilBusquedaSchema)
-def get_user_profile(user: dict = Depends(require_current_user)):
-    """Obtiene el perfil de contratación de la PYME desde Supabase."""
-    user_id = user["sub"]
-    try:
-        res = supabase.table("perfiles_busqueda").select("*").eq("user_id", user_id).execute()
-        if res.data and len(res.data) > 0:
-            return PerfilBusquedaSchema(**res.data[0])
-    except Exception as e:
-        pass
+def get_user_profile(user: Optional[dict] = Depends(get_current_user)):
+    """Obtiene el perfil de contratación de la PYME desde Supabase o devuelve plantilla por defecto."""
+    user_id = user.get("sub") if user else None
+    if user_id:
+        try:
+            res = supabase.table("perfiles_busqueda").select("*").eq("user_id", user_id).execute()
+            if res.data and len(res.data) > 0:
+                return PerfilBusquedaSchema(**res.data[0])
+        except Exception as e:
+            pass
 
-    # Perfil por defecto
+    # Perfil por defecto (o modo demo / invitado)
     return PerfilBusquedaSchema(
-        nombre_empresa="",
-        nit="",
-        palabras_clave=[],
+        nombre_empresa="Mi Empresa PYME",
+        nit="900123456-1",
+        palabras_clave=["Salud", "Suministro", "Mantenimiento"],
         palabras_excluidas=[],
-        departamentos=[],
+        departamentos=["Distrito Capital de Bogotá", "Antioquia", "Bolívar", "Norte de Santander"],
         cuantia_minima=0,
         cuantia_maxima=1000000000,
         semaforo_maximo="AMARILLO",
@@ -31,36 +32,52 @@ def get_user_profile(user: dict = Depends(require_current_user)):
     )
 
 @router.post("", response_model=PerfilBusquedaSchema)
-def save_user_profile(payload: PerfilBusquedaSchema, user: dict = Depends(require_current_user)):
+def save_user_profile(payload: PerfilBusquedaSchema, user: Optional[dict] = Depends(get_current_user)):
     """Crea o actualiza los criterios de búsqueda de licitaciones de la PYME."""
-    user_id = user["sub"]
+    user_id = user.get("sub") if user else "guest_user"
     data = payload.dict()
     data["user_id"] = user_id
 
-    try:
-        supabase.table("perfiles_busqueda").upsert(data, on_conflict="user_id").execute()
-        return payload
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error guardando perfil: {str(e)}")
+    if user_id != "guest_user":
+        try:
+            supabase.table("perfiles_busqueda").upsert(data, on_conflict="user_id").execute()
+        except Exception as e:
+            pass
+    return payload
 
 @router.get("/mis-oportunidades", response_model=LicitacionesResponse)
 def get_my_opportunities(
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100),
-    user: dict = Depends(require_current_user)
+    user: Optional[dict] = Depends(get_current_user)
 ):
     """
     Feed inteligente: calcula en tiempo real el match cognitivo entre el perfil
-    del usuario (Supabase) y el catálogo masivo de licitaciones (ClickHouse).
+    del usuario (Supabase o Demo) y el catálogo masivo de licitaciones (ClickHouse).
     """
-    user_id = user["sub"]
+    user_id = user.get("sub") if user else None
     
     # 1. Obtener perfil del usuario
-    profile_res = supabase.table("perfiles_busqueda").select("*").eq("user_id", user_id).execute()
-    if not profile_res.data:
-        return LicitacionesResponse(total=0, page=page, limit=limit, items=[])
+    profile = None
+    if user_id:
+        try:
+            profile_res = supabase.table("perfiles_busqueda").select("*").eq("user_id", user_id).execute()
+            if profile_res.data:
+                profile = profile_res.data[0]
+        except Exception:
+            profile = None
+
+    if not profile:
+        # Perfil demo activo con criterios representativos para exploración inmediata
+        profile = {
+            "palabras_clave": ["Salud", "Servicios", "Apoyo", "Mantenimiento"],
+            "palabras_excluidas": [],
+            "departamentos": ["Distrito Capital de Bogotá", "Norte de Santander", "Amazonas", "Bolívar", "Antioquia"],
+            "cuantia_minima": 0,
+            "cuantia_maxima": 1000000000,
+            "semaforo_maximo": "AMARILLO"
+        }
         
-    profile = profile_res.data[0]
     keywords = [k.strip() for k in profile.get("palabras_clave", []) if k.strip()]
     excluded = [e.strip() for e in profile.get("palabras_excluidas", []) if e.strip()]
     departamentos = profile.get("departamentos", [])
