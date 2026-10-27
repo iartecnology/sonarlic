@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SonarLogo } from '@/components/SonarLogo';
+import { AIConfigModal } from '@/components/AIConfigModal';
 import { SuperAdminStats, EmpresaSaas } from '@/lib/types';
 import {
   Users,
@@ -17,7 +18,8 @@ import {
   RefreshCw,
   ExternalLink,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Bot
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,8 +32,9 @@ export default function SuperAdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterPlan, setFilterPlan] = useState('');
 
-  // Modal para nueva empresa
+  // Modales
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [nombre, setNombre] = useState('');
   const [nit, setNit] = useState('');
   const [email, setEmail] = useState('');
@@ -135,6 +138,15 @@ export default function SuperAdminPage() {
             >
               ← Ir al Radar Público
             </Link>
+
+            <button
+              onClick={() => setIsAIModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition"
+              title="Configurar Proveedor de Inteligencia Artificial (OpenAI, DeepSeek, Groq, Ollama)"
+            >
+              <Bot className="w-4 h-4 text-[#9B4B75]" />
+              <span>Configurar Motores IA</span>
+            </button>
 
             <button
               onClick={() => setIsModalOpen(true)}
@@ -447,6 +459,13 @@ export default function SuperAdminPage() {
           </div>
         </div>
       )}
+
+      {/* Modal Configuración Global de Inteligencia Artificial */}
+      <AIConfigModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        apiBase={API_BASE}
+      />
     </div>
   );
 }

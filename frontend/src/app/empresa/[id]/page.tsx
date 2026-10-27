@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { SonarLogo } from '@/components/SonarLogo';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
+import { PerfilModal } from '@/components/PerfilModal';
 import { ReglaBusqueda, EmpresaSaas, Licitacion, LicitacionesResponse } from '@/lib/types';
 import {
   Building2,
@@ -62,6 +63,7 @@ export default function EmpresaDashboardPage() {
 
   // Modal para crear/editar regla de búsqueda
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPerfilModalOpen, setIsPerfilModalOpen] = useState(false);
   const [nombreRegla, setNombreRegla] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [palabrasClave, setPalabrasClave] = useState<string[]>([]);
@@ -242,6 +244,14 @@ export default function EmpresaDashboardPage() {
             >
               Radar Público
             </Link>
+            <button
+              onClick={() => setIsPerfilModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
+              title="Configurar Perfil de Contratación PYME"
+            >
+              <Target className="w-4 h-4 text-[#9B4B75]" />
+              <span>Perfil Contratación PYME</span>
+            </button>
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-sm transition"
@@ -747,6 +757,16 @@ export default function EmpresaDashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Modal Perfil de Contratación PYME de la Empresa */}
+      <PerfilModal
+        isOpen={isPerfilModalOpen}
+        onClose={() => setIsPerfilModalOpen(false)}
+        apiBase={API_BASE}
+        onProfileSaved={() => {
+          loadCruces(selectedReglaId);
+        }}
+      />
     </div>
   );
 }

@@ -4,8 +4,6 @@ import Link from 'next/link';
 import { Licitacion, LicitacionesResponse } from '@/lib/types';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
-import { AIConfigModal } from '@/components/AIConfigModal';
-import { PerfilModal } from '@/components/PerfilModal';
 import { AuthModal } from '@/components/AuthModal';
 import { SonarLogo } from '@/components/SonarLogo';
 import {
@@ -487,22 +485,6 @@ export default function DashboardPage() {
       )}
 
       {/* Modales */}
-      <AIConfigModal
-        isOpen={isAIModalOpen}
-        onClose={() => setIsAIModalOpen(false)}
-        apiBase={API_BASE}
-      />
-
-      <PerfilModal
-        isOpen={isPerfilModalOpen}
-        onClose={() => setIsPerfilModalOpen(false)}
-        apiBase={API_BASE}
-        onProfileSaved={() => {
-          setActiveTab('oportunidades');
-          fetchLicitaciones();
-        }}
-      />
-
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
