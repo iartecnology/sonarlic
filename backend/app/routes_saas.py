@@ -419,8 +419,7 @@ def mark_notificacion_leida(empresa_id: str, notif_id: str):
     ch = get_clickhouse()
     try:
         ch.query("""
-            INSERT INTO radar_db.notificaciones_empresa (id, empresa_id, leida, created_at)
-            VALUES (%(id)s, %(emp)s, 1, now())
+            ALTER TABLE radar_db.notificaciones_empresa UPDATE leida = 1 WHERE empresa_id = %(emp)s AND id = %(id)s
         """, parameters={"id": notif_id, "emp": empresa_id})
     except Exception as e:
         pass
@@ -432,13 +431,9 @@ def mark_all_notificaciones_leidas(empresa_id: str):
     """Marca todas las notificaciones de la empresa como leídas."""
     ch = get_clickhouse()
     try:
-        # Consulta las no leídas e inserta con leida=1
-        rows = ch.query("SELECT id FROM radar_db.notificaciones_empresa FINAL WHERE empresa_id = %(emp)s AND leida = 0", parameters={"emp": empresa_id}).result_rows
-        for r in rows:
-            ch.query("""
-                INSERT INTO radar_db.notificaciones_empresa (id, empresa_id, leida, created_at)
-                VALUES (%(id)s, %(emp)s, 1, now())
-            """, parameters={"id": r[0], "emp": empresa_id})
+        ch.query("""
+            ALTER TABLE radar_db.notificaciones_empresa UPDATE leida = 1 WHERE empresa_id = %(emp)s AND leida = 0
+        """, parameters={"emp": empresa_id})
     except Exception:
         pass
     return {"status": "ok", "message": "Todas las notificaciones fueron marcadas como leídas"}
