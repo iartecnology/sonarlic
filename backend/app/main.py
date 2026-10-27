@@ -6,7 +6,7 @@ from .routes_ai_config import router as ai_config_router
 from .db import get_clickhouse
 
 app = FastAPI(
-    title="SonarIAR API - Radar de Licitaciones Inteligente",
+    title="SonarLIC API - Radar de Licitaciones Inteligente",
     description="API Gateway para búsqueda analítica en ClickHouse, enriquecimiento IA y autenticación Supabase.",
     version="1.0.0",
     docs_url="/docs",

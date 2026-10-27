@@ -1,4 +1,4 @@
-# SonarIAR — Radar de Licitaciones Inteligente (SaaS Multiplataforma)
+# SonarLIC — Radar de Licitaciones Inteligente (SaaS Multiplataforma)
 
 Sistema SaaS para búsqueda, análisis predictivo y semaforización con IA de contratos públicos de **SECOP I y SECOP II** (vía SODA API - Datos Abiertos Colombia) enfocado en PYMEs.
 
@@ -9,7 +9,7 @@ Sistema SaaS para búsqueda, análisis predictivo y semaforización con IA de co
 * **Frontend:** Next.js 14 (App Router) + Tailwind CSS + Lucide Icons (Standalone multi-stage Docker).
 * **Backend API Gateway:** FastAPI (Python 3.11) + Pydantic v2 + Validación JWT local Supabase + ClickHouse Connect.
 * **Motor Analítico (OLAP):** ClickHouse (`ReplacingMergeTree` para deduplicación masiva y skip indexes de texto).
-* **Data Worker:** Celery + Celery Beat + Redis (Ingesta incremental periódica y enriquecimiento con OpenAI).
+* **Data Worker:** Celery + Celery Beat + Redis (Ingesta incremental periódica y enriquecimiento con OpenAI/DeepSeek/Groq).
 * **Base Transaccional (OLTP):** Supabase (PostgreSQL para Auth y favoritos del usuario).
 * **Proxy Inverso:** NGINX / Traefik (Dokploy auto-SSL).
 
@@ -22,11 +22,11 @@ Dokploy permite dos modalidades de despliegue según tu preferencia:
 ### Opción 1: Despliegue Vía "Compose" en Dokploy (Recomendado)
 
 1. En tu panel de Dokploy, ve a tu Proyecto y haz clic en **Create Service** -> **Compose**.
-2. Nómbralo `sonariar`.
+2. Nómbralo `sonarlic`.
 3. En la pestaña **Source**, selecciona **Git Provider** (GitHub):
-   * **Repository:** `iartecnology/sonariar`
+   * **Repository:** `iartecnology/sonarlic`
    * **Branch:** `main`
-   * **Compose Path:** `./docker-compose.yml` (o `./dokploy-compose.yml` si usas Traefik integrado).
+   * **Compose Path:** `./docker-compose.yml`
 4. En la pestaña **Environment**, copia y pega el contenido de `.env.example` con tus credenciales reales:
    ```env
    CLICKHOUSE_USER=default
@@ -49,8 +49,8 @@ Dokploy permite dos modalidades de despliegue según tu preferencia:
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/iartecnology/sonariar.git
-   cd sonariar
+   git clone https://github.com/iartecnology/sonarlic.git
+   cd sonarlic
    ```
 
 2. **Crear las variables de entorno:**

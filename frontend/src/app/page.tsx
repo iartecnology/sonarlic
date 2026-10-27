@@ -86,7 +86,7 @@ export default function DashboardPage() {
               <Radar className="w-6 h-6 animate-spin-slow" />
             </div>
             <div>
-              <span className="text-lg font-bold text-slate-900 tracking-tight">SonarIAR</span>
+              <span className="text-lg font-bold text-slate-900 tracking-tight">SonarLIC</span>
               <span className="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                 Radar PYME
               </span>
@@ -242,7 +242,7 @@ export default function DashboardPage() {
               <div className="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4 mb-4">
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-900 mb-2">
                   <Sparkles className="w-4 h-4 text-emerald-600" />
-                  Diagnóstico Cognitivo SonarIAR
+                  Diagnóstico Cognitivo SonarLIC
                 </div>
                 <p className="text-xs text-slate-700 leading-relaxed mb-3">
                   {selectedLicitacion.ai_resumen || 'Sin resumen analítico disponible.'}

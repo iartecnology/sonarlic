@@ -1,4 +1,4 @@
--- Inicialización de base de datos y esquema columnar para SonarIAR (SECOP I y SECOP II)
+-- Inicialización de base de datos y esquema columnar para SonarLIC (SECOP I y SECOP II)
 
 CREATE DATABASE IF NOT EXISTS radar_db;
 

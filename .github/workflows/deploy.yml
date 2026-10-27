@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /var/www/sonarIAR || cd /var/www/radar-licitaciones-saas
+            cd /var/www/sonarLIC || cd /var/www/sonarIAR || cd /var/www/radar-licitaciones-saas
             git pull origin main
             
             # Compilación previa sin apagar contenedores activos
