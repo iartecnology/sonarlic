@@ -18,18 +18,39 @@ def normalize_secop_ii(record: Dict[str, Any]) -> Dict[str, Any]:
     al esquema columnar unificado de radar_db.licitaciones.
     """
     # ID Proceso unificado
-    id_proceso = record.get("id_del_proceso") or record.get("referencia_del_proceso") or record.get("numero_de_proceso") or ""
+    id_proceso = (
+        record.get("proceso_de_compra")
+        or record.get("id_del_proceso")
+        or record.get("id_contrato")
+        or record.get("referencia_del_proceso")
+        or record.get("referencia_del_contrato")
+        or record.get("numero_de_proceso")
+        or ""
+    )
     
     # Cuantía
-    cuantia_raw = record.get("precio_base") or record.get("valor_total_estimado") or 0
+    cuantia_raw = (
+        record.get("valor_del_contrato")
+        or record.get("precio_base")
+        or record.get("valor_total_estimado")
+        or 0
+    )
     try:
         cuantia = float(cuantia_raw)
     except (ValueError, TypeError):
         cuantia = 0.0
 
     # Fechas
-    fecha_pub = parse_date(record.get("fecha_de_publicacion_del")) or datetime.utcnow()
-    fecha_cierre = parse_date(record.get("fecha_de_recepcion_de_respuestas") or record.get("fecha_de_cierre"))
+    fecha_pub = (
+        parse_date(record.get("fecha_de_publicacion_del"))
+        or parse_date(record.get("fecha_de_firma"))
+        or datetime.utcnow()
+    )
+    fecha_cierre = parse_date(
+        record.get("fecha_de_fin_del_contrato")
+        or record.get("fecha_de_recepcion_de_respuestas")
+        or record.get("fecha_de_cierre")
+    )
     fecha_adj = parse_date(record.get("fecha_adjudicacion"))
 
     # URLs
@@ -43,15 +64,15 @@ def normalize_secop_ii(record: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "id_proceso": f"SECOP_II_{id_proceso}",
         "fuente": "SECOP_II",
-        "numero_proceso": record.get("referencia_del_proceso") or record.get("numero_de_proceso") or "",
-        "entidad": record.get("entidad") or record.get("nombre_de_la_entidad") or "",
+        "numero_proceso": record.get("referencia_del_contrato") or record.get("referencia_del_proceso") or record.get("proceso_de_compra") or "",
+        "entidad": record.get("nombre_entidad") or record.get("entidad") or record.get("nombre_de_la_entidad") or "",
         "nit_entidad": record.get("nit_entidad") or "",
-        "departamento": record.get("departamento_entidad") or record.get("departamento") or "Colombia",
-        "municipio": record.get("ciudad_entidad") or record.get("municipio") or "",
-        "estado": record.get("estado_del_proceso") or record.get("fase") or "Publicado",
+        "departamento": record.get("departamento") or record.get("departamento_entidad") or "Colombia",
+        "municipio": record.get("ciudad") or record.get("ciudad_entidad") or record.get("municipio") or "",
+        "estado": record.get("estado_contrato") or record.get("estado_del_proceso") or record.get("fase") or "Publicado",
         "modalidad": record.get("modalidad_de_contratacion") or "",
         "tipo_contrato": record.get("tipo_de_contrato") or "",
-        "objeto": record.get("descripcion_del_procedimiento") or record.get("objeto_a_contratar") or "",
+        "objeto": record.get("objeto_del_contrato") or record.get("descripcion_del_proceso") or record.get("descripcion_del_procedimiento") or "",
         "cuantia": cuantia,
         "moneda": "COP",
         "fecha_publicacion": fecha_pub,
