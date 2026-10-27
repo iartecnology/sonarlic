@@ -3,7 +3,6 @@
 CREATE DATABASE IF NOT EXISTS radar_db;
 
 -- Tabla optimizada para Licitaciones / Procesos de Contratación Pública
--- Usamos ReplacingMergeTree indexado por id_proceso y ordenado por fecha de publicación para consultas rápidas
 CREATE TABLE IF NOT EXISTS radar_db.licitaciones (
     id_proceso String,
     fuente LowCardinality(String),             -- 'SECOP_I' o 'SECOP_II'
@@ -43,3 +42,22 @@ ALTER TABLE radar_db.licitaciones ADD INDEX IF NOT EXISTS idx_objeto objeto TYPE
 ALTER TABLE radar_db.licitaciones ADD INDEX IF NOT EXISTS idx_entidad entidad TYPE set(100) GRANULARITY 2;
 ALTER TABLE radar_db.licitaciones ADD INDEX IF NOT EXISTS idx_cuantia cuantia TYPE minmax GRANULARITY 2;
 ALTER TABLE radar_db.licitaciones ADD INDEX IF NOT EXISTS idx_semaforo ai_semaforo TYPE set(10) GRANULARITY 1;
+
+-- Tabla de Configuración de Proveedor de IA Dinámica
+CREATE TABLE IF NOT EXISTS radar_db.configuracion_ia (
+    key String,
+    provider LowCardinality(String),           -- 'openai', 'deepseek', 'groq', 'anthropic', 'custom'
+    api_key String,
+    model String,
+    base_url String DEFAULT '',
+    temperature Float32 DEFAULT 0.2,
+    actualizado_en DateTime DEFAULT now(),
+    version UInt64 DEFAULT toUnixTimestamp(now())
+)
+ENGINE = ReplacingMergeTree(version)
+PRIMARY KEY (key)
+ORDER BY (key);
+
+-- Insertar configuración por defecto inicial
+INSERT INTO radar_db.configuracion_ia (key, provider, api_key, model, base_url, temperature)
+VALUES ('default_ai', 'openai', '', 'gpt-4o-mini', 'https://api.openai.com/v1', 0.2);

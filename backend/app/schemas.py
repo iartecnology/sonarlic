@@ -43,3 +43,20 @@ class LicitacionesResponse(BaseModel):
 class FavoriteToggleRequest(BaseModel):
     id_proceso: str
     favorito: bool
+
+
+class AIConfigSchema(BaseModel):
+    provider: str = Field(..., description="openai, deepseek, groq, anthropic, ollama, custom")
+    api_key: str = Field(..., description="API Key del proveedor")
+    model: str = Field("gpt-4o-mini", description="Nombre del modelo (ej: gpt-4o-mini, deepseek-chat, llama-3.3-70b-versatile)")
+    base_url: Optional[str] = Field("https://api.openai.com/v1", description="URL Base para proveedores compatibles con OpenAI")
+    temperature: float = Field(0.2, ge=0.0, le=1.0)
+
+
+class AIConfigResponse(BaseModel):
+    provider: str
+    api_key_masked: str
+    model: str
+    base_url: str
+    temperature: float
+    is_configured: bool

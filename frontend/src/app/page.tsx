@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Licitacion, LicitacionesResponse } from '@/lib/types';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
-import { Search, Filter, Radar, Sparkles, Building2, Calendar, DollarSign, X } from 'lucide-react';
+import { AIConfigModal } from '@/components/AIConfigModal';
+import { Search, Filter, Radar, Sparkles, Building2, Calendar, DollarSign, X, Bot, Settings } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -18,8 +19,9 @@ export default function DashboardPage() {
   const [departamento, setDepartamento] = useState('');
   const [semaforo, setSemaforo] = useState('');
   
-  // Modal de Detalle
+  // Modales
   const [selectedLicitacion, setSelectedLicitacion] = useState<Licitacion | null>(null);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
   const fetchLicitaciones = async () => {
     setLoading(true);
@@ -91,9 +93,17 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-xs text-slate-500 font-medium">
-              Conectado a SECOP I y II
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsAIModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+              title="Configurar LLM y Proveedor de IA"
+            >
+              <Bot className="w-4 h-4 text-emerald-600" />
+              <span>Configurar IA</span>
+            </button>
+            <span className="hidden md:inline-block text-xs text-slate-400 font-medium">
+              SECOP I & II
             </span>
           </div>
         </div>
@@ -294,6 +304,13 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Modal de Configuración del Proveedor de IA */}
+      <AIConfigModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        apiBase={API_BASE}
+      />
     </div>
   );
 }
