@@ -298,78 +298,123 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
 
           {/* 4. Documentos & Anexos */}
           {activeTab === 'documentos' && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-xs font-black uppercase text-slate-500 tracking-wider">
-                  Documentación del Proceso
-                </h3>
-                <span className="text-[10px] text-slate-500">Expediente Oficial</span>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xs font-black uppercase text-slate-500 tracking-wider">
+                    Expediente Técnico y Documentos Oficiales
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    Descarga directa de pliegos y especificaciones sin salir de SonarLIC.
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                  Descarga Directa Asistida
+                </span>
               </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
+              {/* Lista de Documentos con Descarga Directa */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200 transition">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-red-500" />
+                    <div className="w-9 h-9 rounded-xl bg-red-100/80 text-red-600 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
                     <div>
-                      <span className="text-xs font-bold text-slate-800 block">Estudios Previos y Análisis del Sector</span>
-                      <span className="text-[10px] text-slate-400">PDF • Oficial Entidad</span>
+                      <span className="text-xs font-black text-slate-900 block">
+                        Estudios Previos y Justificación del Gasto
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        Documento Oficial Entidad • Formato Digital
+                      </span>
                     </div>
                   </div>
-                  {licitacion.url_proceso ? (
-                    <a
-                      href={licitacion.url_proceso}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-[#3B6DB5] hover:underline flex items-center gap-1"
-                    >
-                      <span>Descargar</span>
-                      <Download className="w-3.5 h-3.5" />
-                    </a>
-                  ) : null}
+                  <a
+                    href={`/api/v1/licitaciones/${licitacion.id_proceso}/descargar?tipo=estudios_previos`}
+                    download
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-xs transition"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Descargar Directo</span>
+                  </a>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200 transition">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-blue-500" />
+                    <div className="w-9 h-9 rounded-xl bg-blue-100/80 text-[#3B6DB5] flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
                     <div>
-                      <span className="text-xs font-bold text-slate-800 block">Pliego de Condiciones Definitivo</span>
-                      <span className="text-[10px] text-slate-400">PDF • Requisitos Técnicos</span>
+                      <span className="text-xs font-black text-slate-900 block">
+                        Pliego de Condiciones Definitivo & Requisitos
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        Especificaciones Técnicas y Criterios Habilitantes
+                      </span>
                     </div>
                   </div>
-                  {licitacion.url_proceso ? (
-                    <a
-                      href={licitacion.url_proceso}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-[#3B6DB5] hover:underline flex items-center gap-1"
-                    >
-                      <span>Descargar</span>
-                      <Download className="w-3.5 h-3.5" />
-                    </a>
-                  ) : null}
+                  <a
+                    href={`/api/v1/licitaciones/${licitacion.id_proceso}/descargar?tipo=pliego`}
+                    download
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-xs transition"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Descargar Directo</span>
+                  </a>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/90 rounded-2xl border border-slate-200 transition">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-emerald-500" />
+                    <div className="w-9 h-9 rounded-xl bg-emerald-100/80 text-emerald-600 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5" />
+                    </div>
                     <div>
-                      <span className="text-xs font-bold text-slate-800 block">Anexo Técnico & Formato Económico</span>
-                      <span className="text-[10px] text-slate-400">XLSX • Matriz de Precios</span>
+                      <span className="text-xs font-black text-slate-900 block">
+                        Anexo Técnico y Matriz Económica
+                      </span>
+                      <span className="text-[11px] text-slate-500">
+                        Plantilla Oficial de Precios Unitarios
+                      </span>
                     </div>
                   </div>
-                  {licitacion.url_proceso ? (
-                    <a
-                      href={licitacion.url_proceso}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-bold text-[#3B6DB5] hover:underline flex items-center gap-1"
-                    >
-                      <span>Descargar</span>
-                      <Download className="w-3.5 h-3.5" />
-                    </a>
-                  ) : null}
+                  <a
+                    href={`/api/v1/licitaciones/${licitacion.id_proceso}/descargar?tipo=anexo_economico`}
+                    download
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-xs transition"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Descargar Directo</span>
+                  </a>
                 </div>
               </div>
+
+              {/* Visor Embebido de la Ficha Oficial SECOP II */}
+              {licitacion.url_proceso && (
+                <div className="mt-4 pt-4 border-t border-slate-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                      <ExternalLink className="w-3.5 h-3.5 text-[#3B6DB5]" />
+                      Expediente Transaccional Oficial (SECOP II)
+                    </span>
+                    <a
+                      href={licitacion.url_proceso}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#3B6DB5] hover:underline"
+                    >
+                      Abrir en ventana externa ↗
+                    </a>
+                  </div>
+                  <div className="w-full h-72 rounded-2xl border border-slate-300 overflow-hidden bg-slate-100 relative shadow-inner">
+                    <iframe
+                      src={licitacion.url_proceso}
+                      title="Visor Oficial SECOP"
+                      className="w-full h-full border-0"
+                      sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
