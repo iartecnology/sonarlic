@@ -13,7 +13,8 @@ class WorkerSettings(BaseSettings):
     
     # Datos Abiertos Colombia SODA API
     SODA_DOMAIN: str = "www.datos.gov.co"
-    SODA_APP_TOKEN: Optional[str] = None
+    SODA_APP_TOKEN: Optional[str] = "eZOwCRJJtQIaWjvGttYyPTdfh"
+    SODA_APP_SECRET: Optional[str] = "dDKNrHCRmF6C9BVGoP8kFVEiWK9PFa1DHfU1"
     SODA_API_KEY: Optional[str] = "5548b0pbh9t3vqyjg4o157gwx"
     SODA_API_SECRET: Optional[str] = "20o4789z34rzf6q26x89233h60nqmo7brb715x51o5lbxe0g1k"
     
