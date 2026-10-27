@@ -21,7 +21,7 @@ import {
   FileCheck2
 } from 'lucide-react';
 import { Licitacion } from '@/lib/types';
-import SemaforoBadge from './SemaforoBadge';
+import { SemaforoBadge } from './SemaforoBadge';
 
 interface LicitacionDetailModalProps {
   licitacion: Licitacion | null;
