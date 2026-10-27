@@ -104,9 +104,22 @@ export default function SyncEngineDashboard({ apiBase }: SyncEngineDashboardProp
   const formatFecha = (str?: string) => {
     if (!str) return 'Pendiente';
     try {
-      const d = new Date(str);
-      return d.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + 
-        ' (' + d.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }) + ')';
+      // Si la fecha viene sin 'Z' ni offset, asumimos UTC
+      const isoStr = (str.includes('Z') || str.includes('+') || (str.includes('-') && str.length > 19))
+        ? str 
+        : `${str}Z`;
+      const d = new Date(isoStr);
+      return d.toLocaleTimeString('es-CO', { 
+        timeZone: 'America/Bogota', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: true 
+      }) + ' (' + d.toLocaleDateString('es-CO', { 
+        timeZone: 'America/Bogota', 
+        day: '2-digit', 
+        month: 'short' 
+      }) + ')';
     } catch {
       return str;
     }
@@ -363,8 +376,8 @@ export default function SyncEngineDashboard({ apiBase }: SyncEngineDashboardProp
               ) : filteredLogs.length > 0 ? (
                 filteredLogs.map((log, idx) => (
                   <div key={idx} className="flex items-start gap-2.5">
-                    <span className="text-slate-500 text-[11px] shrink-0">
-                      [{new Date(log.timestamp).toLocaleTimeString()}]
+                    <span className="text-slate-500 text-[11px] shrink-0 font-mono">
+                      [{new Date((log.timestamp.includes('Z') || log.timestamp.includes('+')) ? log.timestamp : `${log.timestamp}Z`).toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour12: true })}]
                     </span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold shrink-0 ${
                       log.nivel === 'INFO' ? 'bg-blue-900/60 text-blue-300 border border-blue-700' :
