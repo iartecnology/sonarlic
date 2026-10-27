@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Licitacion, LicitacionesResponse } from '@/lib/types';
@@ -7,6 +6,7 @@ import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
 import { AIConfigModal } from '@/components/AIConfigModal';
 import { PerfilModal } from '@/components/PerfilModal';
+import { AuthModal } from '@/components/AuthModal';
 import { SonarLogo } from '@/components/SonarLogo';
 import {
   Search,
@@ -24,6 +24,8 @@ import {
   TrendingUp,
   ShieldCheck,
   ExternalLink,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
@@ -43,6 +45,18 @@ export default function DashboardPage() {
   const [selectedLicitacion, setSelectedLicitacion] = useState<Licitacion | null>(null);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isPerfilModalOpen, setIsPerfilModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authDefaultTab, setAuthDefaultTab] = useState<'login' | 'register'>('login');
+
+  const openLogin = () => {
+    setAuthDefaultTab('login');
+    setIsAuthModalOpen(true);
+  };
+
+  const openRegister = () => {
+    setAuthDefaultTab('register');
+    setIsAuthModalOpen(true);
+  };
 
   const fetchLicitaciones = async () => {
     setLoading(true);
@@ -133,22 +147,25 @@ export default function DashboardPage() {
               <span>SuperAdmin</span>
             </Link>
 
+            {/* Botones de Autenticación & Acceso Rápido */}
+            <div className="h-5 w-px bg-slate-200 hidden sm:block mx-0.5" />
+
             <button
-              onClick={() => setIsPerfilModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              title="Configurar Criterios y Palabras Clave de tu Empresa"
+              onClick={openLogin}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition shadow-2xs"
+              title="Iniciar Sesión / Acceso Rápido Demo"
             >
-              <Target className="w-4 h-4" />
-              <span>Mi Perfil PYME</span>
+              <LogIn className="w-3.5 h-3.5 text-[#3B6DB5]" />
+              <span>Ingresar</span>
             </button>
 
             <button
-              onClick={() => setIsAIModalOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 bg-white hover:bg-slate-50 transition-all shadow-2xs"
-              title="Configurar Motor de Inteligencia Artificial"
+              onClick={openRegister}
+              className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition hover:scale-[1.02] active:scale-[0.98]"
+              title="Registrar Nueva Empresa"
             >
-              <Bot className="w-4 h-4 text-[#6C5B8B]" />
-              <span className="hidden sm:inline">Configurar IA</span>
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Registrarse</span>
             </button>
           </div>
         </div>
@@ -484,6 +501,12 @@ export default function DashboardPage() {
           setActiveTab('oportunidades');
           fetchLicitaciones();
         }}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultTab={authDefaultTab}
       />
     </div>
   );
