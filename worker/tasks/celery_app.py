@@ -36,10 +36,10 @@ def ingest_secop_ii_incremental(limit: int = 100):
     """
     logger.info(f"Iniciando sincronización incremental de SECOP II (Límite: {limit})...")
     try:
-        token = settings.SODA_APP_TOKEN or settings.SODA_API_KEY
+        # Autenticación con Key y Secret oficiales de Datos Abiertos Colombia
         client = Socrata(
             settings.SODA_DOMAIN,
-            app_token=token,
+            app_token=None,
             username=settings.SODA_API_KEY,
             password=settings.SODA_API_SECRET,
             timeout=30
