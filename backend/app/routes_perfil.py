@@ -142,8 +142,14 @@ def get_my_opportunities(
     ]
 
     # 3. Obtener favoritos del usuario
-    fav_res = supabase.table("favoritos").select("id_proceso").eq("user_id", user_id).execute()
-    favorite_ids = {f["id_proceso"] for f in fav_res.data} if fav_res.data else set()
+    favorite_ids = set()
+    if user_id:
+        try:
+            fav_res = supabase.table("favoritos").select("id_proceso").eq("user_id", user_id).execute()
+            if fav_res.data:
+                favorite_ids = {f["id_proceso"] for f in fav_res.data}
+        except Exception:
+            favorite_ids = set()
 
     # 4. Cálculo del Match Score en Memoria (0 - 100)
     matched_items = []
