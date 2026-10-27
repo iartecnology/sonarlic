@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { SonarLogo } from '@/components/SonarLogo';
 import { AIConfigModal } from '@/components/AIConfigModal';
 import { SuperAdminStats, EmpresaSaas } from '@/lib/types';
+import SyncEngineDashboard from '@/components/SyncEngineDashboard';
 import {
   Users,
   ShieldCheck,
@@ -19,13 +20,16 @@ import {
   ExternalLink,
   CheckCircle2,
   AlertCircle,
-  Bot
+  Bot,
+  Zap,
+  Server
 } from 'lucide-react';
 import Link from 'next/link';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function SuperAdminPage() {
+  const [activeTab, setActiveTab] = useState<'empresas' | 'sync'>('empresas');
   const [stats, setStats] = useState<SuperAdminStats | null>(null);
   const [empresas, setEmpresas] = useState<EmpresaSaas[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,22 +166,55 @@ export default function SuperAdminPage() {
       {/* Contenido Principal */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
         {/* Banner de Estado General */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-            Panel de Control Global SaaS
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Supervisión integral de clientes corporativos, ejecución de motores de cruce en ClickHouse y estado del servicio.
-          </p>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+              Panel de Control Global SaaS
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Supervisión de clientes corporativos, ejecución del motor de ingesta SECOP y estado del servicio.
+            </p>
+          </div>
+
+          {/* Selector de Pestañas SuperAdmin */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-200/80 rounded-2xl self-start sm:self-auto">
+            <button
+              onClick={() => setActiveTab('empresas')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                activeTab === 'empresas'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Building2 className="w-4 h-4 text-[#3B6DB5]" />
+              <span>Directorio Empresas</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('sync')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all ${
+                activeTab === 'sync'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              <Zap className="w-4 h-4 text-[#D9465A]" />
+              <span>Motor & Sincronización</span>
+            </button>
+          </div>
         </div>
 
-        {/* Métricas Globales */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-[#3B6DB5]/30 transition">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Empresas Registradas
-              </span>
+        {activeTab === 'sync' ? (
+          <SyncEngineDashboard apiBase={API_BASE} />
+        ) : (
+          <>
+            {/* Métricas Globales */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-[#3B6DB5]/30 transition">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Empresas Registradas
+                  </span>
               <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#3B6DB5] flex items-center justify-center">
                 <Building2 className="w-5 h-5" />
               </div>
@@ -353,6 +390,8 @@ export default function SuperAdminPage() {
             </table>
           </div>
         </div>
+        </>
+        )}
       </main>
 
       {/* Modal Registrar Nueva Empresa */}

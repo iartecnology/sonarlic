@@ -144,3 +144,45 @@ class NotificacionesResponse(BaseModel):
     no_leidas: int
     items: List[NotificacionSchema]
 
+
+class SyncExecutionSchema(BaseModel):
+    id: str
+    tipo: str
+    fuente: str
+    estado: str
+    fecha_inicio: datetime
+    fecha_fin: Optional[datetime] = None
+    duracion_segundos: float = 0.0
+    registros_consultados: int = 0
+    registros_insertados: int = 0
+    registros_actualizados: int = 0
+    notificaciones_generadas: int = 0
+    error_mensaje: Optional[str] = ""
+    cursor_timestamp: Optional[str] = ""
+
+
+class SyncLogSchema(BaseModel):
+    execution_id: str
+    timestamp: datetime
+    nivel: str
+    fase: str
+    mensaje: str
+    detalles_json: Optional[str] = "{}"
+
+
+class SyncStatusResponse(BaseModel):
+    estado_motor: str            # 'IDLE' | 'RUNNING'
+    frecuencia_cron: str         # 'Cada 15 minutos'
+    ultima_sincronizacion: Optional[datetime] = None
+    proxima_sincronizacion: Optional[datetime] = None
+    tasa_exito_24h: float = 100.0
+    total_licitaciones_actuales: int = 0
+    total_ejecuciones_completadas: int = 0
+    token_soda_valido: bool = True
+
+
+class TriggerSyncRequest(BaseModel):
+    limit: int = 500
+    fuente: str = "SECOP_II"
+
+

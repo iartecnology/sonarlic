@@ -109,3 +109,40 @@ export interface NotificacionesResponse {
   no_leidas: number;
   items: Notificacion[];
 }
+
+export interface SyncExecution {
+  id: string;
+  tipo: string;
+  fuente: string;
+  estado: string;
+  fecha_inicio: string;
+  fecha_fin?: string;
+  duracion_segundos: number;
+  registros_consultados: number;
+  registros_insertados: number;
+  registros_actualizados: number;
+  notificaciones_generadas: number;
+  error_mensaje?: string;
+  cursor_timestamp?: string;
+}
+
+export interface SyncLog {
+  execution_id: string;
+  timestamp: string;
+  nivel: 'INFO' | 'WARNING' | 'ERROR' | 'SUCCESS';
+  fase: string;
+  mensaje: string;
+  detalles_json?: string;
+}
+
+export interface SyncStatus {
+  estado_motor: string;
+  frecuencia_cron: string;
+  ultima_sincronizacion?: string;
+  proxima_sincronizacion?: string;
+  tasa_exito_24h: number;
+  total_licitaciones_actuales: number;
+  total_ejecuciones_completadas: number;
+  token_soda_valido: boolean;
+}
+
