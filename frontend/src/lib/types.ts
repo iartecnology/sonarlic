@@ -44,3 +44,40 @@ export interface PerfilBusqueda {
   semaforo_maximo: string;
   notificar_email: boolean;
 }
+
+export interface ReglaBusqueda {
+  id?: string;
+  empresa_id: string;
+  nombre_regla: string;
+  descripcion?: string;
+  palabras_clave: string[];
+  palabras_excluidas: string[];
+  departamentos: string[];
+  cuantia_minima: number;
+  cuantia_maxima: number;
+  semaforo_maximo: string;
+  activa: boolean;
+  coincidencias_count?: number;
+}
+
+export interface EmpresaSaas {
+  id: string;
+  nombre: string;
+  nit: string;
+  email_contacto: string;
+  telefono?: string;
+  plan: 'STARTER' | 'PRO' | 'ENTERPRISE';
+  estado: 'ACTIVO' | 'SUSPENDIDO';
+  total_reglas?: number;
+  total_matches?: number;
+}
+
+export interface SuperAdminStats {
+  total_empresas: number;
+  empresas_activas: number;
+  total_reglas_activas: number;
+  total_licitaciones_analizadas: number;
+  total_cruces_generados: number;
+  distribucion_planes: Record<string, number>;
+  ultimas_empresas: EmpresaSaas[];
+}

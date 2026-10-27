@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Licitacion, LicitacionesResponse } from '@/lib/types';
 import { LicitacionCard } from '@/components/LicitacionCard';
 import { SemaforoBadge } from '@/components/SemaforoBadge';
@@ -114,6 +115,24 @@ export default function DashboardPage() {
 
           {/* Acciones de la barra */}
           <div className="flex items-center gap-2.5">
+            <Link
+              href="/empresa/emp_tecnologia"
+              className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
+              title="Panel Multi-Búsqueda de Empresa"
+            >
+              <Building2 className="w-4 h-4 text-[#3B6DB5]" />
+              <span>Portal Empresas</span>
+            </Link>
+
+            <Link
+              href="/superadmin"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200 hover:bg-slate-50 transition"
+              title="Panel de Control SuperAdmin SaaS"
+            >
+              <ShieldCheck className="w-4 h-4 text-[#D9465A]" />
+              <span>SuperAdmin</span>
+            </Link>
+
             <button
               onClick={() => setIsPerfilModalOpen(true)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition-all hover:scale-[1.02] active:scale-[0.98]"

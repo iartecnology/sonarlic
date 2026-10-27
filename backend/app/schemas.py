@@ -74,3 +74,42 @@ class AIConfigResponse(BaseModel):
     base_url: str
     temperature: float
     is_configured: bool
+
+
+# --- SaaS Multi-Búsqueda y Empresas ---
+
+class ReglaBusquedaSchema(BaseModel):
+    id: Optional[str] = None
+    empresa_id: str
+    nombre_regla: str
+    descripcion: Optional[str] = ""
+    palabras_clave: List[str] = Field(default=[], description="Keywords que activan la regla")
+    palabras_excluidas: List[str] = Field(default=[], description="Keywords que descartan")
+    departamentos: List[str] = Field(default=[], description="Departamentos objetivo")
+    cuantia_minima: float = 0.0
+    cuantia_maxima: float = 1000000000.0
+    semaforo_maximo: str = "AMARILLO"
+    activa: bool = True
+    coincidencias_count: Optional[int] = 0
+
+
+class EmpresaSaasSchema(BaseModel):
+    id: Optional[str] = None
+    nombre: str
+    nit: str
+    email_contacto: str
+    telefono: Optional[str] = ""
+    plan: str = "PRO"  # STARTER, PRO, ENTERPRISE
+    estado: str = "ACTIVO"  # ACTIVO, SUSPENDIDO
+    total_reglas: Optional[int] = 0
+    total_matches: Optional[int] = 0
+
+
+class SuperAdminStatsResponse(BaseModel):
+    total_empresas: int
+    empresas_activas: int
+    total_reglas_activas: int
+    total_licitaciones_analizadas: int
+    total_cruces_generados: int
+    distribucion_planes: dict
+    ultimas_empresas: List[EmpresaSaasSchema]
