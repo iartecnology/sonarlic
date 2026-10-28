@@ -67,6 +67,16 @@ stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
+
+[program:celery_worker]
+directory=/app
+command=celery -A worker.tasks.celery_app worker --beat --loglevel=info -c 2
+autostart=true
+autorestart=true
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 SEOF
 
 EXPOSE 80
