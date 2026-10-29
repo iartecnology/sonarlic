@@ -45,11 +45,12 @@ def ingest_secop_ii_incremental(limit: int = 100):
             timeout=30
         )
         
-        # Filtro: Contratos publicados o en borrador reciente ordenados por fecha
+        # Filtro: Contratos ordenados por fecha_de_firma descendente
         results = client.get(
             settings.DATASET_SECOP_II,
+            where="fecha_de_firma IS NOT NULL",
             limit=limit,
-            order="fecha_de_publicacion_del DESC"
+            order="fecha_de_firma DESC"
         )
         
         if not results:
@@ -111,6 +112,19 @@ def ingest_secop_ii_incremental(limit: int = 100):
 
     except Exception as e:
         logger.error(f"Fallo en la tarea de ingesta SECOP II: {e}", exc_info=True)
+        # Registrar fallo en ClickHouse
+        try:
+            import uuid
+            ch_client = get_clickhouse_client()
+            err_id = f"sync_err_{uuid.uuid4().hex[:8]}"
+            safe_err = str(e).replace("'", " ").replace('"', ' ')[:300]
+            ch_client.command(f"""
+                INSERT INTO radar_db.sync_executions 
+                (id, tipo, fuente, estado, fecha_inicio, fecha_fin, duracion_segundos, registros_consultados, registros_insertados, registros_actualizados, notificaciones_generadas, error_mensaje, cursor_timestamp)
+                VALUES ('{err_id}', 'AUTOMATICO_15M', 'SECOP II', 'FAILED', now(), now(), 0.5, 0, 0, 0, 0, '{safe_err}', now())
+            """)
+        except Exception:
+            pass
         return {"status": "error", "message": str(e)}
 
 
