@@ -116,21 +116,21 @@ export default function SuperAdminPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
-      {/* Header Corporativo SuperAdmin con Vidrio Esmerilado Oficial iAR Tecnology */}
+      {/* Header Corporativo SuperAdmin con Vidrio Esmerilado Idéntico a Página Principal */}
       <header className="sticky top-0 z-40 px-3 sm:px-6 pt-0 transition-all duration-300">
-        <div className="max-w-7xl mx-auto bg-slate-900/80 backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border-b border-x border-slate-700/60 rounded-b-[25px] shadow-[0px_5px_23px_4px_rgba(0,0,0,0.3)] text-white px-4 sm:px-8 h-18 flex items-center justify-between transition-all">
-          <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto bg-white/75 backdrop-blur-[15px] [-webkit-backdrop-filter:blur(15px)] border-b border-x border-white/60 rounded-b-[25px] shadow-[0px_5px_23px_4px_rgba(0,0,0,0.08)] px-4 sm:px-8 h-18 flex items-center justify-between transition-all">
+          <div className="flex items-center gap-3">
             <SonarLogo size="md" />
-            <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-black bg-gradient-to-r from-[#D9465A] to-[#9B4B75] text-white uppercase tracking-wider">
+            <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-[#D9465A] to-[#9B4B75] text-white uppercase tracking-wider shadow-2xs">
               SuperAdmin Console
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={fetchSuperAdminData}
               disabled={loading}
-              className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition"
+              className="p-2 text-slate-500 hover:text-slate-900 rounded-xl hover:bg-slate-100 border border-slate-200/60 bg-white/60 transition shadow-2xs backdrop-blur-xs"
               title="Recargar datos"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -138,26 +138,26 @@ export default function SuperAdminPage() {
 
             <Link
               href="/"
-              className="text-xs font-bold text-slate-300 hover:text-white px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200/80 bg-white/60 hover:bg-white transition shadow-2xs backdrop-blur-xs"
             >
               ← Ir al Radar Público
             </Link>
 
             <button
               onClick={() => setIsAIModalOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-200 hover:text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:text-slate-900 border border-slate-200/80 bg-white/60 hover:bg-white transition shadow-2xs backdrop-blur-xs"
               title="Configurar Proveedor de Inteligencia Artificial (OpenAI, DeepSeek, Groq, Ollama)"
             >
-              <Bot className="w-4 h-4 text-[#9B4B75]" />
+              <Bot className="w-3.5 h-3.5 text-[#9B4B75]" />
               <span>Configurar Motores IA</span>
             </button>
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] to-[#9B4B75] hover:opacity-95 shadow-md transition"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] hover:opacity-95 shadow-sm shadow-[#9B4B75]/25 transition hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Plus className="w-4 h-4" />
-              Nueva Empresa
+              <Plus className="w-3.5 h-3.5" />
+              <span>Nueva Empresa</span>
             </button>
           </div>
         </div>
