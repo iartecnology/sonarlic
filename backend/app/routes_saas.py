@@ -552,47 +552,162 @@ def get_sync_execution_logs(execution_id: str):
 @router.post("/sync/trigger", response_model=SyncExecutionSchema)
 def trigger_manual_sync(payload: TriggerSyncRequest):
     """
-    Dispara una sincronización manual inmediata y registra la auditoría y logs en ClickHouse.
+    Dispara una sincronización manual inmediata real conectándose a SODA SECOP II,
+    guarda las licitaciones reales en ClickHouse y registra la lista de procesos en los logs de auditoría.
     """
+    import time
+    from worker.tasks.celery_app import ingest_secop_ii_incremental
+    from worker.tasks.config import settings
+    from sodapy import Socrata
+    from worker.tasks.normalizers import normalize_secop_ii
+
     ch = get_clickhouse()
-    exec_id = f"sync_{uuid.uuid4().hex[:8]}"
-    ahora = datetime.now()
+    exec_id = f"sync_man_{uuid.uuid4().hex[:8]}"
+    inicio = datetime.now()
+    t0 = time.time()
     
-    # 1. Registrar inicio
-    ch.query("""
-        INSERT INTO radar_db.sync_executions 
-        (id, tipo, fuente, estado, fecha_inicio, duracion_segundos, registros_consultados, registros_insertados, registros_actualizados, notificaciones_generadas, cursor_timestamp)
-        VALUES (%(id)s, 'MANUAL', %(fuente)s, 'SUCCESS', %(inicio)s, 8.6, %(lim)s, 38, 14, 4, '2026-10-27T05:30:00.000')
-    """, parameters={"id": exec_id, "fuente": payload.fuente, "inicio": ahora, "lim": payload.limit})
-    
-    # 2. Registrar logs detallados de la corrida
-    logs_to_insert = [
-        (exec_id, ahora, 'INFO', 'FETCH_SODA', f'Conexión establecida con SODA SECOP II ($limit={payload.limit})', '{"status": 200}'),
-        (exec_id, ahora, 'INFO', 'TRANSFORM', f'{payload.limit} registros procesados, normalizados y tipados a esquema ClickHouse', '{"validos": payload.limit}'),
-        (exec_id, ahora, 'INFO', 'CLICKHOUSE_INSERT', 'Batch INSERT ejecutado: 38 nuevas licitaciones, 14 actualizadas por versión', '{"duration_ms": 640}'),
-        (exec_id, ahora, 'INFO', 'MATCHING_RULES', 'Evaluación de compatibilidad ejecutada contra reglas activas de empresas SaaS', '{"reglas": 6}'),
-        (exec_id, ahora, 'SUCCESS', 'DISPATCH_NOTIF', '4 nuevas notificaciones con score > 75% despachadas a empresas en tiempo real', '{"notifs": 4}')
-    ]
-    
-    for l in logs_to_insert:
+    limit = min(payload.limit or 50, 200)
+
+    try:
+        client = Socrata(
+            settings.SODA_DOMAIN,
+            app_token=settings.SODA_APP_TOKEN,
+            username=settings.SODA_API_KEY,
+            password=settings.SODA_API_SECRET,
+            timeout=30
+        )
+
+        # 1. Log inicio
         ch.query("""
             INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
-            VALUES (%(id)s, %(ts)s, %(nivel)s, %(fase)s, %(msg)s, %(det)s)
-        """, parameters={"id": l[0], "ts": l[1], "nivel": l[2], "fase": l[3], "msg": l[4], "det": l[5]})
-        
-    return SyncExecutionSchema(
-        id=exec_id,
-        tipo="MANUAL",
-        fuente=payload.fuente,
-        estado="SUCCESS",
-        fecha_inicio=ahora,
-        fecha_fin=ahora,
-        duracion_segundos=8.6,
-        registros_consultados=payload.limit,
-        registros_insertados=38,
-        registros_actualizados=14,
-        notificaciones_generadas=4,
-        error_mensaje="",
-        cursor_timestamp="2026-10-27T05:30:00.000"
-    )
+            VALUES (%(id)s, now(), 'INFO', 'FETCH_SODA', %(msg)s, %(det)s)
+        """, parameters={
+            "id": exec_id,
+            "msg": f"Iniciando consulta directa a SODA SECOP II (Límite: {limit})",
+            "det": f'{{"limit": {limit}, "fuente": "{payload.fuente}"}}'
+        })
+
+        # 2. Consulta SODA
+        results = client.get(
+            settings.DATASET_SECOP_II,
+            where="fecha_de_firma IS NOT NULL",
+            limit=limit,
+            order="fecha_de_firma DESC"
+        )
+
+        normalized_records = []
+        for r in results:
+            try:
+                item = normalize_secop_ii(r)
+                if item["id_proceso"]:
+                    normalized_records.append(item)
+            except Exception:
+                continue
+
+        # 3. Inserción en ClickHouse
+        if normalized_records:
+            columns = list(normalized_records[0].keys())
+            data = [[row[col] for col in columns] for row in normalized_records]
+            ch.insert("radar_db.licitaciones", data, column_names=columns)
+
+        duracion = round(time.time() - t0, 2)
+        total_insertados = len(normalized_records)
+
+        # 4. Registrar logs con la lista de licitaciones cargadas
+        ch.query("""
+            INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
+            VALUES (%(id)s, now(), 'SUCCESS', 'CLICKHOUSE_INSERT', %(msg)s, %(det)s)
+        """, parameters={
+            "id": exec_id,
+            "msg": f"Se insertaron exitosamente {total_insertados} licitaciones en ClickHouse radar_db.licitaciones",
+            "det": f'{{"insertados": {total_insertados}, "duracion_s": {duracion}}}'
+        })
+
+        # Registrar hasta 10 licitaciones específicas en los logs para auditoría detallada
+        for rec in normalized_records[:10]:
+            entidad_corta = (rec.get("entidad") or "")[:40]
+            obj_corto = (rec.get("objeto") or "")[:70]
+            cuantia_val = rec.get("cuantia") or 0
+            ch.query("""
+                INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
+                VALUES (%(id)s, now(), 'INFO', 'LICITACION_CARGADA', %(msg)s, %(det)s)
+            """, parameters={
+                "id": exec_id,
+                "msg": f"[{rec.get('numero_proceso') or rec.get('id_proceso')}] {entidad_corta}: {obj_corto} (${cuantia_val:,.0f} COP)",
+                "det": f'{{"id_proceso": "{rec.get("id_proceso")}", "cuantia": {cuantia_val}}}'
+            })
+
+        # 5. Registrar en sync_executions
+        cursor_ts = datetime.now()
+        ch.query("""
+            INSERT INTO radar_db.sync_executions 
+            (id, tipo, fuente, estado, fecha_inicio, fecha_fin, duracion_segundos, registros_consultados, registros_insertados, registros_actualizados, notificaciones_generadas, cursor_timestamp)
+            VALUES (%(id)s, 'MANUAL', %(fuente)s, 'SUCCESS', %(inicio)s, now(), %(dur)s, %(consultados)s, %(insertados)s, 0, 0, %(cursor)s)
+        """, parameters={
+            "id": exec_id,
+            "fuente": payload.fuente,
+            "inicio": inicio,
+            "dur": duracion,
+            "consultados": len(results),
+            "insertados": total_insertados,
+            "cursor": cursor_ts
+        })
+
+        return SyncExecutionSchema(
+            id=exec_id,
+            tipo="MANUAL",
+            fuente=payload.fuente,
+            estado="SUCCESS",
+            fecha_inicio=inicio,
+            fecha_fin=datetime.now(),
+            duracion_segundos=duracion,
+            registros_consultados=len(results),
+            registros_insertados=total_insertados,
+            registros_actualizados=0,
+            notificaciones_generadas=0,
+            error_mensaje="",
+            cursor_timestamp=cursor_ts.isoformat()
+        )
+
+    except Exception as e:
+        duracion = round(time.time() - t0, 2)
+        err_msg = str(e)[:300]
+        try:
+            ch.query("""
+                INSERT INTO radar_db.sync_executions 
+                (id, tipo, fuente, estado, fecha_inicio, fecha_fin, duracion_segundos, registros_consultados, registros_insertados, registros_actualizados, notificaciones_generadas, error_mensaje, cursor_timestamp)
+                VALUES (%(id)s, 'MANUAL', %(fuente)s, 'FAILED', %(inicio)s, now(), %(dur)s, 0, 0, 0, 0, %(err)s, now())
+            """, parameters={
+                "id": exec_id,
+                "fuente": payload.fuente,
+                "inicio": inicio,
+                "dur": duracion,
+                "err": err_msg
+            })
+            ch.query("""
+                INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
+                VALUES (%(id)s, now(), 'ERROR', 'FAILED', %(msg)s, %(det)s)
+            """, parameters={
+                "id": exec_id,
+                "msg": f"Error en sincronización manual: {err_msg}",
+                "det": f'{{"error": "{err_msg}"}}'
+            })
+        except Exception:
+            pass
+
+        return SyncExecutionSchema(
+            id=exec_id,
+            tipo="MANUAL",
+            fuente=payload.fuente,
+            estado="FAILED",
+            fecha_inicio=inicio,
+            fecha_fin=datetime.now(),
+            duracion_segundos=duracion,
+            registros_consultados=0,
+            registros_insertados=0,
+            registros_actualizados=0,
+            notificaciones_generadas=0,
+            error_mensaje=err_msg,
+            cursor_timestamp=datetime.now().isoformat()
+        )
 

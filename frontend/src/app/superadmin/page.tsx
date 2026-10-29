@@ -47,19 +47,21 @@ export default function SuperAdminPage() {
   const [saving, setSaving] = useState(false);
 
   const fetchSuperAdminData = async () => {
-    setLoading(true);
     try {
-      const [resStats, resEmpresas] = await Promise.all([
+      const [resStats, resEmpresas] = await Promise.allSettled([
         fetch(`${API_BASE}/api/v1/saas/superadmin/stats`),
         fetch(`${API_BASE}/api/v1/saas/empresas`)
       ]);
 
-      if (resStats.ok) {
-        const statsData = await resStats.json();
+      if (resStats.status === 'fulfilled' && resStats.value.ok) {
+        const statsData = await resStats.value.json();
         setStats(statsData);
+        if (statsData.ultimas_empresas && statsData.ultimas_empresas.length > 0) {
+          setEmpresas(statsData.ultimas_empresas);
+        }
       }
-      if (resEmpresas.ok) {
-        const empresasData = await resEmpresas.json();
+      if (resEmpresas.status === 'fulfilled' && resEmpresas.value.ok) {
+        const empresasData = await resEmpresas.value.json();
         setEmpresas(empresasData);
       }
     } catch (err) {

@@ -101,6 +101,17 @@ def ingest_secop_ii_incremental(limit: int = 100):
                 INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
                 VALUES ('{exec_id}', now(), 'SUCCESS', 'SECOP_II_INGEST', 'Sincronización periódica automática completada: {len(data)} registros procesados', '{{"registros": {len(data)}}}')
             """)
+
+            # Registrar en log las licitaciones específicas cargadas
+            for rec in normalized_records[:10]:
+                entidad_corta = (rec.get("entidad") or "")[:40].replace("'", " ")
+                obj_corto = (rec.get("objeto") or "")[:70].replace("'", " ")
+                cuantia_val = rec.get("cuantia") or 0
+                num_p = (rec.get("numero_proceso") or rec.get("id_proceso") or "").replace("'", " ")
+                ch_client.command(f"""
+                    INSERT INTO radar_db.sync_logs (execution_id, timestamp, nivel, fase, mensaje, detalles_json)
+                    VALUES ('{exec_id}', now(), 'INFO', 'LICITACION_CARGADA', '[{num_p}] {entidad_corta}: {obj_corto} (${cuantia_val:,.0f} COP)', '{{"id": "{rec.get("id_proceso")}"}}')
+                """)
         except Exception as log_err:
             logger.warning(f"No se pudo registrar la auditoría en sync_executions: {log_err}")
 
