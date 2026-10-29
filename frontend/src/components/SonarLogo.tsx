@@ -4,12 +4,14 @@ interface SonarLogoProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   showSubtitle?: boolean;
+  isDark?: boolean;
 }
 
 export const SonarLogo: React.FC<SonarLogoProps> = ({
   className = '',
   size = 'md',
   showSubtitle = true,
+  isDark = false,
 }) => {
   const iconSizes = {
     sm: 'w-7 h-7',
@@ -79,15 +81,15 @@ export const SonarLogo: React.FC<SonarLogoProps> = ({
       {/* Logotipo Tipográfico: SonarLIC iAR tecnology */}
       <div className="flex flex-col leading-none">
         <div className={`font-extrabold tracking-tight ${textSizes[size]}`}>
-          <span className="text-slate-900">Sonar</span>
+          <span className={isDark ? "text-white" : "text-slate-900"}>Sonar</span>
           <span className="bg-gradient-to-r from-[#D9465A] via-[#9B4B75] to-[#3B6DB5] bg-clip-text text-transparent font-black ml-0.5">
             LIC
           </span>
         </div>
         {showSubtitle && (
-          <span className="text-[10px] font-semibold text-slate-500 tracking-wider flex items-center gap-1 mt-0.5">
+          <span className={`text-[10px] font-semibold tracking-wider flex items-center gap-1 mt-0.5 ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             <span>by</span>
-            <span className="font-bold text-slate-800 tracking-normal">iAR tecnology</span>
+            <span className={`font-bold tracking-normal ${isDark ? "text-slate-200" : "text-slate-800"}`}>iAR tecnology</span>
           </span>
         )}
       </div>

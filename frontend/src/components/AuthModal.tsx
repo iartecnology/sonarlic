@@ -115,28 +115,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* Encabezado con Identidad iAR */}
-        <div className="p-6 pb-5 bg-gradient-to-br from-slate-900 via-[#171526] to-[#101726] text-white">
-          <div className="mb-4">
-            <SonarLogo size="sm" />
+        {/* Encabezado con Identidad iAR estilo Claro Homologado a Página Principal */}
+        <div className="p-6 pb-5 bg-white border-b border-slate-100">
+          <div className="mb-3">
+            <SonarLogo size="sm" isDark={false} />
           </div>
-          <h2 className="text-xl font-black tracking-tight">
+          <h2 className="text-xl font-black text-slate-900 tracking-tight">
             {tab === 'login' ? 'Bienvenido a SonarLIC' : 'Registra tu Empresa'}
           </h2>
-          <p className="text-xs text-slate-300 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             {tab === 'login'
               ? 'Inicia sesión para gestionar tus oportunidades y reglas de contratación pública.'
               : 'Empieza a recibir y cruzar licitaciones del SECOP a la medida de tu negocio.'}
           </p>
 
-          {/* Selector de Pestañas: Login vs Registro */}
-          <div className="grid grid-cols-2 bg-white/10 p-1 rounded-xl mt-5 text-xs font-bold">
+          {/* Selector de Pestañas: Login vs Registro con estilo claro idéntico al sitio */}
+          <div className="grid grid-cols-2 bg-slate-100 p-1 rounded-xl mt-5 text-xs font-bold border border-slate-200/60">
             <button
               onClick={() => setTab('login')}
               className={`py-2 rounded-lg transition-all ${
                 tab === 'login'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-300 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Iniciar Sesión
@@ -145,8 +145,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               onClick={() => setTab('register')}
               className={`py-2 rounded-lg transition-all ${
                 tab === 'register'
-                  ? 'bg-white text-slate-900 shadow-sm'
-                  : 'text-slate-300 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               Crear Cuenta
