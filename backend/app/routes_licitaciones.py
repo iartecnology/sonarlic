@@ -25,6 +25,7 @@ def list_licitaciones(
     departamento: Optional[str] = Query(None, description="Filtrar por departamento"),
     semaforo: Optional[str] = Query(None, description="VERDE, AMARILLO o ROJO"),
     estado: Optional[str] = Query(None, description="Estado del proceso"),
+    tipo_estado: Optional[str] = Query(None, description="ACTIVO, SUSCRITO, ADJUDICADO"),
     min_cuantia: Optional[float] = Query(None, ge=0),
     max_cuantia: Optional[float] = Query(None, ge=0),
     page: int = Query(1, ge=1),
@@ -52,7 +53,16 @@ def list_licitaciones(
     if semaforo:
         where_clauses.append("ai_semaforo = %(semaforo)s")
         params["semaforo"] = semaforo.upper()
-        
+
+    if tipo_estado:
+        te = tipo_estado.upper()
+        if te == "ACTIVO":
+            where_clauses.append("(ilike(estado, '%oferta%') OR ilike(estado, '%abierto%') OR ilike(estado, '%publicado%') OR ilike(estado, '%borrador%') OR ilike(estado, '%convocatoria%'))")
+        elif te == "SUSCRITO":
+            where_clauses.append("(ilike(estado, '%aprobado%') OR ilike(estado, '%ejecución%') OR ilike(estado, '%ejecucion%') OR ilike(estado, '%suscrito%') OR ilike(estado, '%modificado%') OR ilike(estado, '%celebrado%'))")
+        elif te == "ADJUDICADO":
+            where_clauses.append("(ilike(estado, '%adjudicado%') OR ilike(estado, '%seleccionado%') OR ilike(estado, '%adjudicacion%'))")
+
     if estado:
         where_clauses.append("estado = %(estado)s")
         params["estado"] = estado

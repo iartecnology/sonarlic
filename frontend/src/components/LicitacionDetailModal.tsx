@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Licitacion } from '@/lib/types';
 import { SemaforoBadge } from './SemaforoBadge';
+import { EstadoBadge } from './EstadoBadge';
 
 interface LicitacionDetailModalProps {
   licitacion: Licitacion | null;
@@ -114,11 +115,7 @@ export default function LicitacionDetailModal({ licitacion, onClose }: Licitacio
               <span className="text-[11px] font-mono font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
                 {licitacion.numero_proceso || licitacion.id_proceso}
               </span>
-              {licitacion.estado && (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-blue-50 text-[#3B6DB5] border border-blue-100">
-                  {licitacion.estado}
-                </span>
-              )}
+              <EstadoBadge estado={licitacion.estado} size="sm" />
             </div>
             
             {/* Nombre Completo de la Entidad */}

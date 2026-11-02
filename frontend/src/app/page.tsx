@@ -39,6 +39,7 @@ export default function DashboardPage() {
   const [query, setQuery] = useState('');
   const [departamento, setDepartamento] = useState('');
   const [semaforo, setSemaforo] = useState('');
+  const [tipoEstado, setTipoEstado] = useState<'TODOS' | 'ACTIVO' | 'SUSCRITO' | 'ADJUDICADO'>('TODOS');
 
   // Modales
   const [selectedLicitacion, setSelectedLicitacion] = useState<Licitacion | null>(null);
@@ -72,6 +73,7 @@ export default function DashboardPage() {
         if (query) params.append('q', query);
         if (departamento) params.append('departamento', departamento);
         if (semaforo) params.append('semaforo', semaforo);
+        if (tipoEstado !== 'TODOS') params.append('tipo_estado', tipoEstado);
         params.append('limit', '24');
 
         const res = await fetch(`${API_BASE}/api/v1/licitaciones?${params.toString()}`);
@@ -90,7 +92,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     fetchLicitaciones();
-  }, [activeTab, departamento, semaforo]);
+  }, [activeTab, departamento, semaforo, tipoEstado]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,7 +239,7 @@ export default function DashboardPage() {
       {/* 3. Selector de Pestañas: Mis Oportunidades vs Explorador General */}
       <div className="bg-white border-b border-slate-200 sticky top-18 z-20 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={() => setActiveTab('explorador')}
               className={`py-4 px-4 text-xs font-black border-b-2 flex items-center gap-2 transition-all ${
@@ -266,7 +268,57 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-500">
+          {/* Filtros de Estado: Activos, Suscritos, Adjudicados */}
+          {activeTab === 'explorador' && (
+            <div className="hidden lg:flex items-center gap-1.5 py-2.5">
+              <span className="text-[11px] font-bold text-slate-400 mr-1">Filtro Rápido:</span>
+              <button
+                onClick={() => setTipoEstado('TODOS')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all ${
+                  tipoEstado === 'TODOS'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                Todos ({total})
+              </button>
+              <button
+                onClick={() => setTipoEstado('ACTIVO')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all flex items-center gap-1.5 ${
+                  tipoEstado === 'ACTIVO'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
+                    : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Convocatorias Activas
+              </button>
+              <button
+                onClick={() => setTipoEstado('SUSCRITO')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all flex items-center gap-1.5 ${
+                  tipoEstado === 'SUSCRITO'
+                    ? 'bg-[#3B6DB5] text-white border-[#3B6DB5] shadow-xs'
+                    : 'bg-blue-50 text-[#3B6DB5] border-blue-200 hover:bg-blue-100'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#3B6DB5]" />
+                Contratos Suscritos
+              </button>
+              <button
+                onClick={() => setTipoEstado('ADJUDICADO')}
+                className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all flex items-center gap-1.5 ${
+                  tipoEstado === 'ADJUDICADO'
+                    ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
+                    : 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
+                Adjudicados
+              </button>
+            </div>
+          )}
+
+          <div className="flex items-center gap-2 text-xs text-slate-500">
             <span className="font-semibold text-slate-800">{total}</span> licitaciones indexadas
           </div>
         </div>

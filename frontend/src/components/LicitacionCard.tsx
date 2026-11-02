@@ -3,6 +3,7 @@
 import React from 'react';
 import { Licitacion } from '@/lib/types';
 import { SemaforoBadge } from './SemaforoBadge';
+import { EstadoBadge } from './EstadoBadge';
 import { Building2, MapPin, Calendar, DollarSign, Star, ExternalLink, Sparkles, CheckCircle2 } from 'lucide-react';
 
 interface LicitacionCardProps {
@@ -52,6 +53,7 @@ export const LicitacionCard: React.FC<LicitacionCardProps> = ({
             <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200/60 uppercase">
               {licitacion.fuente}
             </span>
+            <EstadoBadge estado={licitacion.estado} size="sm" />
             <SemaforoBadge status={licitacion.ai_semaforo} />
 
             {/* Insignia de Match Corporativa iAR */}
