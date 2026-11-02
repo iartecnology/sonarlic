@@ -19,8 +19,10 @@ class WorkerSettings(BaseSettings):
     SODA_API_SECRET: Optional[str] = "20o4789z34rzf6q26x89233h60nqmo7brb715x51o5lbxe0g1k"
     
     # IDs de datasets oficiales de Colombia Compra Eficiente
-    DATASET_SECOP_II: str = "jbjy-vk9h"  # Procesos de Contratación SECOP II
-    DATASET_SECOP_I: str = "f7sd-wnpi"   # Procesos de Contratación SECOP I
+    DATASET_SECOP_II_PROCESOS: str = "p6dx-8zbt"   # SECOP II - Procesos de Contratación (Licitaciones activas)
+    DATASET_SECOP_II_CONTRATOS: str = "jbjy-vk9h"  # SECOP II - Contratos Electrónicos (Firmados)
+    DATASET_SECOP_II: str = "p6dx-8zbt"            # Por defecto ingestamos Procesos / Licitaciones
+    DATASET_SECOP_I: str = "f7sd-wnpi"             # Procesos de Contratación SECOP I
     
     # OpenAI API Key para enriquecimiento
     OPENAI_API_KEY: Optional[str] = None

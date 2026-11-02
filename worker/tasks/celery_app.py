@@ -45,23 +45,44 @@ def ingest_secop_ii_incremental(limit: int = 100):
             timeout=30
         )
         
-        # Filtro: Contratos ordenados por fecha_de_firma descendente
-        results = client.get(
-            settings.DATASET_SECOP_II,
-            where="fecha_de_firma IS NOT NULL",
-            limit=limit,
-            order="fecha_de_firma DESC"
-        )
-        
+        # 1. Consultar Procesos de Contratación (Licitaciones activas, presentación de ofertas)
+        half_limit = max(limit // 2, 20)
+        procesos_results = []
+        try:
+            procesos_results = client.get(
+                settings.DATASET_SECOP_II_PROCESOS,
+                where="fecha_de_publicacion_del IS NOT NULL",
+                limit=half_limit,
+                order="fecha_de_publicacion_del DESC"
+            )
+        except Exception as e_proc:
+            logger.warning(f"Error consultando dataset procesos ({settings.DATASET_SECOP_II_PROCESOS}): {e_proc}")
+
+        # 2. Consultar Contratos Electrónicos (Adjudicados y suscritos)
+        contratos_results = []
+        try:
+            contratos_results = client.get(
+                settings.DATASET_SECOP_II_CONTRATOS,
+                where="fecha_de_firma IS NOT NULL",
+                limit=half_limit,
+                order="fecha_de_firma DESC"
+            )
+        except Exception as e_cont:
+            logger.warning(f"Error consultando dataset contratos ({settings.DATASET_SECOP_II_CONTRATOS}): {e_cont}")
+
+        results = (procesos_results or []) + (contratos_results or [])
+
         if not results:
-            logger.info("No se encontraron nuevos registros en SECOP II.")
+            logger.info("No se encontraron registros en SECOP II.")
             return {"status": "ok", "inserted": 0}
 
         normalized_records = []
+        seen_ids = set()
         for r in results:
             try:
                 item = normalize_secop_ii(r)
-                if item["id_proceso"]:
+                if item["id_proceso"] and item["id_proceso"] not in seen_ids:
+                    seen_ids.add(item["id_proceso"])
                     normalized_records.append(item)
             except Exception as e:
                 logger.warning(f"Error normalizando fila: {e}")

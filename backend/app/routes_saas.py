@@ -587,19 +587,39 @@ def trigger_manual_sync(payload: TriggerSyncRequest):
             "det": f'{{"limit": {limit}, "fuente": "{payload.fuente}"}}'
         })
 
-        # 2. Consulta SODA
-        results = client.get(
-            settings.DATASET_SECOP_II,
-            where="fecha_de_firma IS NOT NULL",
-            limit=limit,
-            order="fecha_de_firma DESC"
-        )
+        # 2. Consulta SODA: Procesos de contratación activos + Contratos
+        half_limit = max(limit // 2, 20)
+        procesos_res = []
+        try:
+            procesos_res = client.get(
+                settings.DATASET_SECOP_II_PROCESOS,
+                where="fecha_de_publicacion_del IS NOT NULL",
+                limit=half_limit,
+                order="fecha_de_publicacion_del DESC"
+            )
+        except Exception as e_p:
+            pass
+
+        contratos_res = []
+        try:
+            contratos_res = client.get(
+                settings.DATASET_SECOP_II_CONTRATOS,
+                where="fecha_de_firma IS NOT NULL",
+                limit=half_limit,
+                order="fecha_de_firma DESC"
+            )
+        except Exception as e_c:
+            pass
+
+        results = (procesos_res or []) + (contratos_res or [])
 
         normalized_records = []
+        seen_ids = set()
         for r in results:
             try:
                 item = normalize_secop_ii(r)
-                if item["id_proceso"]:
+                if item["id_proceso"] and item["id_proceso"] not in seen_ids:
+                    seen_ids.add(item["id_proceso"])
                     normalized_records.append(item)
             except Exception:
                 continue

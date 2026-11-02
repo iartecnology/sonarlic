@@ -43,15 +43,17 @@ def normalize_secop_ii(record: Dict[str, Any]) -> Dict[str, Any]:
     # Fechas
     fecha_pub = (
         parse_date(record.get("fecha_de_publicacion_del"))
+        or parse_date(record.get("fecha_de_ultima_publicaci"))
         or parse_date(record.get("fecha_de_firma"))
         or datetime.utcnow()
     )
     fecha_cierre = parse_date(
-        record.get("fecha_de_fin_del_contrato")
-        or record.get("fecha_de_recepcion_de_respuestas")
+        record.get("fecha_de_recepcion_de_respuestas")
+        or record.get("fecha_de_apertura_efectiva")
+        or record.get("fecha_de_fin_del_contrato")
         or record.get("fecha_de_cierre")
     )
-    fecha_adj = parse_date(record.get("fecha_adjudicacion"))
+    fecha_adj = parse_date(record.get("fecha_adjudicacion") or record.get("fecha_de_publicacion_fase_3"))
 
     # URLs
     url_proceso = ""
@@ -61,18 +63,27 @@ def normalize_secop_ii(record: Dict[str, Any]) -> Dict[str, Any]:
     elif isinstance(url_dict, str):
         url_proceso = url_dict
 
+    objeto_txt = (
+        record.get("descripci_n_del_procedimiento")
+        or record.get("nombre_del_procedimiento")
+        or record.get("objeto_del_contrato")
+        or record.get("descripcion_del_proceso")
+        or record.get("descripcion_del_procedimiento")
+        or ""
+    )
+
     return {
         "id_proceso": f"SECOP_II_{id_proceso}",
         "fuente": "SECOP_II",
-        "numero_proceso": record.get("referencia_del_contrato") or record.get("referencia_del_proceso") or record.get("proceso_de_compra") or "",
-        "entidad": record.get("nombre_entidad") or record.get("entidad") or record.get("nombre_de_la_entidad") or "",
+        "numero_proceso": record.get("referencia_del_proceso") or record.get("referencia_del_contrato") or record.get("proceso_de_compra") or "",
+        "entidad": record.get("entidad") or record.get("nombre_entidad") or record.get("nombre_de_la_entidad") or "",
         "nit_entidad": record.get("nit_entidad") or "",
-        "departamento": record.get("departamento") or record.get("departamento_entidad") or "Colombia",
-        "municipio": record.get("ciudad") or record.get("ciudad_entidad") or record.get("municipio") or "",
-        "estado": record.get("estado_contrato") or record.get("estado_del_proceso") or record.get("fase") or "Publicado",
+        "departamento": record.get("departamento_entidad") or record.get("departamento") or "Colombia",
+        "municipio": record.get("ciudad_entidad") or record.get("ciudad") or record.get("municipio") or "",
+        "estado": record.get("fase") or record.get("estado_del_procedimiento") or record.get("estado_contrato") or "Publicado",
         "modalidad": record.get("modalidad_de_contratacion") or "",
         "tipo_contrato": record.get("tipo_de_contrato") or "",
-        "objeto": record.get("objeto_del_contrato") or record.get("descripcion_del_proceso") or record.get("descripcion_del_procedimiento") or "",
+        "objeto": objeto_txt,
         "cuantia": cuantia,
         "moneda": "COP",
         "fecha_publicacion": fecha_pub,
